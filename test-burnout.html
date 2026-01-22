@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест на выгорание | Тихая поддержка</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <custom-navbar></custom-navbar>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Тест на эмоциональное выгорание (CBI)</h1>
+            <p>Оцените уровень своего истощения и усталости</p>
+        </section>
+
+        <section class="card test-container">
+            <div class="test-intro">
+                <h2>Инструкция</h2>
+                <p>Оцените, насколько каждое утверждение соответствует вашему состоянию в последнее время.</p>
+            </div>
+
+            <form id="burnoutTestForm" class="test-form">
+                <div class="question">
+                    <h3>1. Насколько вы чувствуете себя истощённым?</h3>
+                    <div class="options">
+                        <label><input type="radio" name="q1" value="0" required> Никогда / Очень редко (0%)</label>
+                        <label><input type="radio" name="q1" value="25"> Редко (25%)</label>
+                        <label><input type="radio" name="q1" value="50"> Иногда (50%)</label>
+                        <label><input type="radio" name="q1" value="75"> Часто (75%)</label>
+                        <label><input type="radio" name="q1" value="100"> Всегда / Почти всегда (100%)</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>2. Насколько вы чувствуете усталость при пробуждении?</h3>
+                    <div class="options">
+                        <label><input type="radio" name="q2" value="0" required> Никогда / Очень редко (0%)</label>
+                        <label><input type="radio" name="q2" value="25"> Редко (25%)</label>
+                        <label><input type="radio" name="q2" value="50"> Иногда (50%)</label>
+                        <label><input type="radio" name="q2" value="75"> Часто (75%)</label>
+                        <label><input type="radio" name="q2" value="100"> Всегда / Почти всегда (100%)</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>3. Насколько вам нужно больше времени, чтобы восстановиться после рабочего дня?</h3>
+                    <div class="options">
+                        <label><input type="radio" name="q3" value="0" required> Никогда / Очень редко (0%)</label>
+                        <label><input type="radio" name="q3" value="25"> Редко (25%)</label>
+                        <label><input type="radio" name="q3" value="50"> Иногда (50%)</label>
+                        <label><input type="radio" name="q3" value="75"> Часто (75%)</label>
+                        <label><input type="radio" name="q3" value="100"> Всегда / Почти всегда (100%)</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>4. Насколько вы чувствуете, что «сгораете»?</h3>
+                    <div class="options">
+                        <label><input type="radio" name="q4" value="0" required> Никогда / Очень редко (0%)</label>
+                        <label><input type="radio" name="q4" value="25"> Редко (25%)</label>
+                        <label><input type="radio" name="q4" value="50"> Иногда (50%)</label>
+                        <label><input type="radio" name="q4" value="75"> Часто (75%)</label>
+                        <label><input type="radio" name="q4" value="100"> Всегда / Почти всегда (100%)</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>5. Насколько вы чувствуете, что ваши личные ресурсы исчерпаны?</h3>
+                    <div class="options">
+                        <label><input type="radio" name="q5" value="0" required> Никогда / Очень редко (0%)</label>
+                        <label><input type="radio" name="q5" value="25"> Редко (25%)</label>
+                        <label><input type="radio" name="q5" value="50"> Иногда (50%)</label>
+                        <label><input type="radio" name="q5" value="75"> Часто (75%)</label>
+                        <label><input type="radio" name="q5" value="100"> Всегда / Почти всегда (100%)</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>6. Насколько вы чувствуете физическую усталость?</h3>
+                    <div class="options">
+                        <label><input type="radio" name="q6" value="0" required> Никогда / Очень редко (0%)</label>
+                        <label><input type="radio" name="q6" value="25"> Редко (25%)</label>
+                        <label><input type="radio" name="q6" value="50"> Иногда (50%)</label>
+                        <label><input type="radio" name="q6" value="75"> Часто (75%)</label>
+                        <label><input type="radio" name="q6" value="100"> Всегда / Почти всегда (100%)</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="button">Получить результаты</button>
+            </form>
+
+            <div id="testResults" class="test-results" style="display: none;">
+                <h2>Ваши результаты</h2>
+                <div id="resultText"></div>
+                <div class="disclaimer">
+                    <h3>Важная информация</h3>
+                    <p>Этот тест — инструмент самооценки, а не медицинский диагноз. Результаты не могут быть использованы для постановки диагноза или назначения лечения.</p>
+                    <p>Если вы испытываете сильный стресс, тревогу, чувство безысходности или мысли о самоповреждении — обратитесь к лицензированному психологу или психиатру. Вы имеете право на поддержку — не только в кризис, но и до него.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <custom-footer></custom-footer>
+    
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script>
+        document.getElementById('burnoutTestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let total = 0;
+            let answered = 0;
+            for (let i = 1; i <= 6; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected) {
+                    total += parseInt(selected.value);
+                    answered++;
+                }
+            }
+
+            const average = answered > 0 ? Math.round(total / answered) : 0;
+
+            let resultText = '';
+            if (average < 25) {
+                resultText = `<p><strong>${average}%: низкий уровень выгорания</strong></p>
+                <p>Ваш уровень истощения находится в пределах нормы. Продолжайте заботиться о балансе между работой и отдыхом.</p>`;
+            } else if (average <= 50) {
+                resultText = `<p><strong>${average}%: умеренный уровень выгорания</strong></p>
+                <p>Вы испытываете некоторое истощение. Рекомендуется обратить внимание на режим дня, качество отдыха и методы управления стрессом.</p>`;
+            } else {
+                resultText = `<p><strong>${average}%: высокий уровень выгорания</strong></p>
+                <p>Вы испытываете значительное истощение. Это может влиять на ваше здоровье и качество жизни. Рекомендуется обратиться за профессиональной помощью и пересмотреть свою нагрузку.</p>`;
+            }
+
+            document.getElementById('resultText').innerHTML = resultText;
+            document.getElementById('testResults').style.display = 'block';
+            window.scrollTo(0, document.getElementById('testResults').offsetTop);
+        });
+    </script>
+</body>
+</html>

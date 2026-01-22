@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест на детско-родительские отношения | Тихая поддержка</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <custom-navbar></custom-navbar>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Тест на детско-родительские отношения (EMBU-S)</h1>
+            <p>Оцените стиль воспитания ваших родителей</p>
+        </section>
+
+        <section class="card test-container">
+            <div class="test-intro">
+                <h2>Инструкция</h2>
+                <p>Вспомните, как ваш отец и ваша мать вели себя, когда вы были ребёнком (до 16 лет). Оцените каждое утверждение отдельно для каждого родителя.</p>
+            </div>
+
+            <form id="parentingTestForm" class="test-form">
+                <h3>Ваш отец:</h3>
+                <div class="question">
+                    <h4>1. Проявлял эмоциональную теплоту, любовь</h4>
+                    <div class="options">
+                        <label><input type="radio" name="father_q1" value="1" required> Никогда</label>
+                        <label><input type="radio" name="father_q1" value="2"> Редко</label>
+                        <label><input type="radio" name="father_q1" value="3"> Иногда</label>
+                        <label><input type="radio" name="father_q1" value="4"> Часто</label>
+                        <label><input type="radio" name="father_q1" value="5"> Очень часто</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>2. Помогал, когда я был(а) в беде</h4>
+                    <div class="options">
+                        <label><input type="radio" name="father_q2" value="1" required> Никогда</label>
+                        <label><input type="radio" name="father_q2" value="2"> Редко</label>
+                        <label><input type="radio" name="father_q2" value="3"> Иногда</label>
+                        <label><input type="radio" name="father_q2" value="4"> Часто</label>
+                        <label><input type="radio" name="father_q2" value="5"> Очень часто</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>3. Хвалил меня</h4>
+                    <div class="options">
+                        <label><input type="radio" name="father_q3" value="1" required> Никогда</label>
+                        <label><input type="radio" name="father_q3" value="2"> Редко</label>
+                        <label><input type="radio" name="father_q3" value="3"> Иногда</label>
+                        <label><input type="radio" name="father_q3" value="4"> Часто</label>
+                        <label><input type="radio" name="father_q3" value="5"> Очень часто</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>4. Делал что-то со мной ради удовольствия</h4>
+                    <div class="options">
+                        <label><input type="radio" name="father_q4" value="1" required> Никогда</label>
+                        <label><input type="radio" name="father_q4" value="2"> Редко</label>
+                        <label><input type="radio" name="father_q4" value="3"> Иногда</label>
+                        <label><input type="radio" name="father_q4" value="4"> Часто</label>
+                        <label><input type="radio" name="father_q4" value="5"> Очень часто</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>5. Критиковал меня</h4>
+                    <div class="options">
+                        <label><input type="radio" name="father_q5" value="1" required> Никогда</label>
+                        <label><input type="radio" name="father_q5" value="2"> Редко</label>
+                        <label><input type="radio" name="father_q5" value="3"> Иногда</label>
+                        <label><input type="radio" name="father_q5" value="4"> Часто</label>
+                        <label><input type="radio" name="father_q5" value="5"> Очень часто</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>6. Обвинял меня в том, что я делаю всё неправильно</h4>
+                    <div class="options">
+                        <label><input type="radio" name="father_q6" value="1" required> Никогда</label>
+                        <label><input type="radio" name="father_q6" value="2"> Редко</label>
+                        <label><input type="radio" name="father_q6" value="3"> Иногда</label>
+                        <label><input type="radio" name="father_q6" value="4"> Часто</label>
+                        <label><input type="radio" name="father_q6" value="5"> Очень часто</label>
+                    </div>
+                </div>
+
+                <h3>Ваша мать:</h3>
+                <div class="question">
+                    <h4>1. Проявляла эмоциональную теплоту, любовь</h4>
+                    <div class="options">
+                        <label><input type="radio" name="mother_q1" value="1" required> Никогда</label>
+                        <label><input type="radio" name="mother_q1" value="2"> Редко</label>
+                        <label><input type="radio" name="mother_q1" value="3"> Иногда</label>
+                        <label><input type="radio" name="mother_q1" value="4"> Часто</label>
+                        <label><input type="radio" name="mother_q1" value="5"> Очень часто</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>2. Помогала, когда я был(а) в беде</h4>
+                    <div class="options">
+                        <label><input type="radio" name="mother_q2" value="1" required> Никогда</label>
+                        <label><input type="radio" name="mother_q2" value="2"> Редко</label>
+                        <label><input type="radio" name="mother_q2" value="3"> Иногда</label>
+                        <label><input type="radio" name="mother_q2" value="4"> Часто</label>
+                        <label><input type="radio" name="mother_q2" value="5"> Очень часто</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>3. Хвалила меня</h4>
+                    <div class="options">
+                        <label><input type="radio" name="mother_q3" value="1" required> Никогда</label>
+                        <label><input type="radio" name="mother_q3" value="2"> Редко</label>
+                        <label><input type="radio" name="mother_q3" value="3"> Иногда</label>
+                        <label><input type="radio" name="mother_q3" value="4"> Часто</label>
+                        <label><input type="radio" name="mother_q3" value="5"> Очень часто</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>4. Делала что-то со мной ради удовольствия</h4>
+                    <div class="options">
+                        <label><input type="radio" name="mother_q4" value="1" required> Никогда</label>
+                        <label><input type="radio" name="mother_q4" value="2"> Редко</label>
+                        <label><input type="radio" name="mother_q4" value="3"> Иногда</label>
+                        <label><input type="radio" name="mother_q4" value="4"> Часто</label>
+                        <label><input type="radio" name="mother_q4" value="5"> Очень часто</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>5. Критиковала меня</h4>
+                    <div class="options">
+                        <label><input type="radio" name="mother_q5" value="1" required> Никогда</label>
+                        <label><input type="radio" name="mother_q5" value="2"> Редко</label>
+                        <label><input type="radio" name="mother_q5" value="3"> Иногда</label>
+                        <label><input type="radio" name="mother_q5" value="4"> Часто</label>
+                        <label><input type="radio" name="mother_q5" value="5"> Очень часто</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>6. Обвиняла меня в том, что я делаю всё неправильно</h4>
+                    <div class="options">
+                        <label><input type="radio" name="mother_q6" value="1" required> Никогда</label>
+                        <label><input type="radio" name="mother_q6" value="2"> Редко</label>
+                        <label><input type="radio" name="mother_q6" value="3"> Иногда</label>
+                        <label><input type="radio" name="mother_q6" value="4"> Часто</label>
+                        <label><input type="radio" name="mother_q6" value="5"> Очень часто</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="button">Получить результаты</button>
+            </form>
+
+            <div id="testResults" class="test-results" style="display: none;">
+                <h2>Ваши результаты</h2>
+                <div id="resultText"></div>
+                <div class="disclaimer">
+                    <h3>Важная информация</h3>
+                    <p>Этот тест — инструмент самооценки, а не медицинский диагноз. Результаты не могут быть использованы для постановки диагноза или назначения лечения.</p>
+                    <p>Если вы испытываете сильный стресс, тревогу, чувство безысходности или мысли о самоповреждении — обратитесь к лицензированному психологу или психиатру. Вы имеете право на поддержку — не только в кризис, но и до него.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <custom-footer></custom-footer>
+    
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script>
+        document.getElementById('parentingTestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let fatherWarmth = 0;
+            let fatherCriticism = 0;
+            let motherWarmth = 0;
+            let motherCriticism = 0;
+            
+            // Calculate father warmth (questions 1-4)
+            for (let i = 1; i <= 4; i++) {
+                const selected = document.querySelector(`input[name="father_q${i}"]:checked`);
+                if (selected) fatherWarmth += parseInt(selected.value);
+            }
+            
+            // Calculate father criticism (questions 5-6)
+            for (let i = 5; i <= 6; i++) {
+                const selected = document.querySelector(`input[name="father_q${i}"]:checked`);
+                if (selected) fatherCriticism += parseInt(selected.value);
+            }
+            
+            // Calculate mother warmth (questions 1-4)
+            for (let i = 1; i <= 4; i++) {
+                const selected = document.querySelector(`input[name="mother_q${i}"]:checked`);
+                if (selected) motherWarmth += parseInt(selected.value);
+            }
+            
+            // Calculate mother criticism (questions 5-6)
+            for (let i = 5; i <= 6; i++) {
+                const selected = document.querySelector(`input[name="mother_q${i}"]:checked`);
+                if (selected) motherCriticism += parseInt(selected.value);
+            }
+
+            let resultText = `<h3>Ваш отец:</h3>
+            <p>Уровень эмоциональной теплоты: ${fatherWarmth >= 12 ? 'высокий' : fatherWarmth >= 8 ? 'средний' : 'низкий'}</p>
+            <p>Уровень критики: ${fatherCriticism >= 8 ? 'высокий' : fatherCriticism >= 5 ? 'средний' : 'низкий'}</p>
+            
+            <h3>Ваша мать:</h3>
+            <p>Уровень эмоциональной теплоты: ${motherWarmth >= 12 ? 'высокий' : motherWarmth >= 8 ? 'средний' : 'низкий'}</p>
+            <p>Уровень критики: ${motherCriticism >= 8 ? 'высокий' : motherCriticism >= 5 ? 'средний' : 'низкий'}</p>
+            
+            <h3>Интерпретация:</h3>
+            <p>Этот опросник помогает увидеть, какие паттерны заботы вы получали в детстве. Он не даёт «диагноза» и не сравнивает вас с «идеальным».</p>
+            <p>Ваш опыт — реален, даже если он не совпадает с нормой. EMBU отражает ваше восприятие, а не объективную картину. Это инструмент для рефлексии, а не для обвинения родителей.</p>`;
+
+            document.getElementById('resultText').innerHTML = resultText;
+            document.getElementById('testResults').style.display = 'block';
+            window.scrollTo(0, document.getElementById('testResults').offsetTop);
+        });
+    </script>
+</body>
+</html>

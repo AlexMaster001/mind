@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест на тревожность | Тихая поддержка</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <custom-navbar></custom-navbar>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Тест на тревожность (GAD-7)</h1>
+            <p>Оцените уровень своей тревожности за последние 2 недели</p>
+        </section>
+
+        <section class="card test-container">
+            <div class="test-intro">
+                <h2>Инструкция</h2>
+                <p>Ниже приведены утверждения, описывающие, как вы себя чувствовали за последние две недели. Отметьте, насколько часто каждое из них было характерно для вас.</p>
+            </div>
+
+            <form id="anxietyTestForm" class="test-form">
+                <div class="question">
+                    <h3>1. Чувствовать нервозность, тревогу или напряжение</h3>
+                    <div class="options">
+                        <label><input type="radio" name="q1" value="0" required> Совсем нет </label>
+                        <label><input type="radio" name="q1" value="1"> Несколько дней </label>
+                        <label><input type="radio" name="q1" value="2"> Более половины дней </label>
+                        <label><input type="radio" name="q1" value="3"> Почти каждый день </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>2. Не в состоянии остановить или контролировать беспокойство</h3>
+                    <div class="options">
+                        <label><input type="radio" name="q2" value="0" required> Совсем нет </label>
+                        <label><input type="radio" name="q2" value="1"> Несколько дней </label>
+                        <label><input type="radio" name="q2" value="2"> Более половины дней </label>
+                        <label><input type="radio" name="q2" value="3"> Почти каждый день </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>3. Беспокоиться о разных вещах</h3>
+                    <div class="options">
+                        <label><input type="radio" name="q3" value="0" required> Совсем нет </label>
+                        <label><input type="radio" name="q3" value="1"> Несколько дней </label>
+                        <label><input type="radio" name="q3" value="2"> Более половины дней </label>
+                        <label><input type="radio" name="q3" value="3"> Почти каждый день </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>4. Трудно расслабиться</h3>
+                    <div class="options">
+                        <label><input type="radio" name="q4" value="0" required> Совсем нет </label>
+                        <label><input type="radio" name="q4" value="1"> Несколько дней </label>
+                        <label><input type="radio" name="q4" value="2"> Более половины дней </label>
+                        <label><input type="radio" name="q4" value="3"> Почти каждый день </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>5. Быть настолько неспокойным, что трудно сидеть спокойно</h3>
+                    <div class="options">
+                        <label><input type="radio" name="q5" value="0" required> Совсем нет </label>
+                        <label><input type="radio" name="q5" value="1"> Несколько дней </label>
+                        <label><input type="radio" name="q5" value="2"> Более половины дней </label>
+                        <label><input type="radio" name="q5" value="3"> Почти каждый день </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>6. Становиться легко раздражаемым или раздражённым</h3>
+                    <div class="options">
+                        <label><input type="radio" name="q6" value="0" required> Совсем нет </label>
+                        <label><input type="radio" name="q6" value="1"> Несколько дней </label>
+                        <label><input type="radio" name="q6" value="2"> Более половины дней </label>
+                        <label><input type="radio" name="q6" value="3"> Почти каждый день </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>7. Чувствовать страх, будто что-то ужасное может случиться</h3>
+                    <div class="options">
+                        <label><input type="radio" name="q7" value="0" required> Совсем нет </label>
+                        <label><input type="radio" name="q7" value="1"> Несколько дней </label>
+                        <label><input type="radio" name="q7" value="2"> Более половины дней </label>
+                        <label><input type="radio" name="q7" value="3"> Почти каждый день </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="button">Получить результаты</button>
+            </form>
+
+            <div id="testResults" class="test-results" style="display: none;">
+                <h2>Ваши результаты</h2>
+                <div id="resultText"></div>
+                <div class="disclaimer">
+                    <h3>Важная информация</h3>
+                    <p>Этот тест — инструмент самооценки, а не медицинский диагноз. Результаты не могут быть использованы для постановки диагноза или назначения лечения.</p>
+                    <p>Если вы испытываете сильный стресс, тревогу, чувство безысходности или мысли о самоповреждении — обратитесь к лицензированному психологу или психиатру. Вы имеете право на поддержку — не только в кризис, но и до него.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <custom-footer></custom-footer>
+    
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script>
+        document.getElementById('anxietyTestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let total = 0;
+            for (let i = 1; i <= 7; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected) total += parseInt(selected.value);
+            }
+
+            let resultText = '';
+            if (total <= 4) {
+                resultText = `<p><strong>${total} баллов: минимальная тревога</strong></p>
+                <p>Ваш уровень тревожности находится в пределах нормы. Продолжайте заботиться о своем эмоциональном состоянии.</p>`;
+            } else if (total <= 9) {
+                resultText = `<p><strong>${total} баллов: лёгкая тревога</strong></p>
+                <p>Вы испытываете некоторую тревожность. Рекомендуется обратить внимание на техники релаксации и управления стрессом.</p>`;
+            } else if (total <= 14) {
+                resultText = `<p><strong>${total} баллов: умеренная тревога</strong></p>
+                <p>У вас заметный уровень тревожности. Рассмотрите возможность консультации со специалистом для получения поддержки.</p>`;
+            } else {
+                resultText = `<p><strong>${total} баллов: тяжёлая тревога</strong></p>
+                <p>Ваш уровень тревожности высок. Рекомендуется обратиться за профессиональной помощью к психологу или врачу.</p>`;
+            }
+
+            document.getElementById('resultText').innerHTML = resultText;
+            document.getElementById('testResults').style.display = 'block';
+            window.scrollTo(0, document.getElementById('testResults').offsetTop);
+        });
+    </script>
+</body>
+</html>

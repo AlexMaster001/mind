@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для родителей | Тихая поддержка</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <custom-navbar></custom-navbar>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Поддержка родителей</h1>
+            <p>Практические материалы для родителей подростков</p>
+            <div class="author-signature">
+              <p>Подготовлено Алексеем Кирсановым, психологом с 8-летним опытом работы с подростками и семьями.</p>
+            </div>
+</section>
+            <h2>Категории материалов</h2>
+<div class="categories-grid">
+                <article class="category-card">
+                    <h3>Общение</h3>
+                    <p>Как выстроить доверительный диалог с подростком</p>
+                    <a href="/communication.html" class="button">Читать</a>
+                </article>
+                <article class="category-card">
+                    <h3>Эмоции подростка</h3>
+                    <p>Как помочь ребенку справляться с эмоциональными перегрузками</p>
+                    <a href="/emotions.html" class="button">Читать</a>
+                </article>
+                <article class="category-card">
+                    <h3>Кризисные ситуации</h3>
+                    <p>Что делать в сложных моментах взросления</p>
+                    <a href="/crisis.html" class="button">Читать</a>
+                </article>
+</div>
+        </section>
+        <section class="education-section">
+            <h2>Кружок "Свободный кубик"</h2>
+            <p>Развивающие занятия для детей с элементами психологической поддержки</p>
+            <div class="club-registration">
+                <form class="club-form">
+                    <div class="form-group">
+                        <label for="parent-name">Имя родителя</label>
+                        <input type="text" id="parent-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="child-name">Имя ребенка</label>
+                        <input type="text" id="child-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="child-age">Возраст ребенка</label>
+                        <input type="number" id="child-age" min="3" max="12" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact">Контактный телефон</label>
+                        <input type="tel" id="contact" required>
+                    </div>
+                    <button type="submit" class="button">Записаться в кружок</button>
+                </form>
+            </div>
+        </section>
+<p class="signature">Материалы подготовлены Кирсановым Алексеем психологом. Все рекомендации носят общий характер и не заменяют индивидуальной консультации.</p>
+    </main>
+<custom-footer></custom-footer>
+    
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+</body>
+</html>

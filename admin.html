@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ панель | MindMender Therapy Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-indigo-50">
+    <custom-navbar></custom-navbar>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Admin Sidebar -->
+            <div class="lg:w-1/5 bg-white rounded-xl shadow-lg p-6 h-fit">
+                <div class="text-center mb-6">
+                    <div class="w-24 h-24 rounded-full bg-indigo-100 mx-auto mb-4 overflow-hidden">
+                        <img src="https://huggingface.co/spaces/Alex01010101010/mindmender-therapy-hub/resolve/main/images/Аватар.jpg" alt="Администратор" class="w-full h-full object-cover" style="object-position: center 30%;">
+</div>
+                    <h2 class="text-xl font-bold text-indigo-900">Администратор</h2>
+                </div>
+
+                <nav class="space-y-2">
+                    <a href="#dashboard" class="flex items-center px-4 py-2 text-indigo-600 bg-indigo-50 rounded-lg">
+                        <i data-feather="home" class="mr-3"></i> Панель управления
+                    </a>
+                    <a href="#users" class="flex items-center px-4 py-2 text-gray-600 hover:bg-indigo-50 rounded-lg">
+                        <i data-feather="users" class="mr-3"></i> Пользователи
+                    </a>
+                    <a href="#appointments" class="flex items-center px-4 py-2 text-gray-600 hover:bg-indigo-50 rounded-lg">
+                        <i data-feather="calendar" class="mr-3"></i> Записи
+                    </a>
+                    <a href="#reports" class="flex items-center px-4 py-2 text-gray-600 hover:bg-indigo-50 rounded-lg">
+                        <i data-feather="pie-chart" class="mr-3"></i> Отчеты
+                    </a>
+                    <a href="#settings" class="flex items-center px-4 py-2 text-gray-600 hover:bg-indigo-50 rounded-lg">
+                        <i data-feather="settings" class="mr-3"></i> Настройки
+                    </a>
+                    <a href="/login.html" class="flex items-center px-4 py-2 text-gray-600 hover:bg-indigo-50 rounded-lg">
+                        <i data-feather="log-out" class="mr-3"></i> Выйти
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="lg:w-4/5">
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                    <h2 class="text-2xl font-bold text-indigo-900 mb-6">Панель управления</h2>
+                    
+                    <div class="grid md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-indigo-50 rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600">Всего пользователей</p>
+                                    <p class="text-3xl font-bold text-indigo-900">124</p>
+                                </div>
+                                <div class="bg-indigo-100 p-3 rounded-full">
+                                    <i data-feather="users" class="text-indigo-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-indigo-50 rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600">Новые записи</p>
+                                    <p class="text-3xl font-bold text-indigo-900">24</p>
+                                </div>
+                                <div class="bg-indigo-100 p-3 rounded-full">
+                                    <i data-feather="calendar" class="text-indigo-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-indigo-50 rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600">Доход за месяц</p>
+                                    <p class="text-3xl font-bold text-indigo-900">56,400 ₽</p>
+                                </div>
+                                <div class="bg-indigo-100 p-3 rounded-full">
+                                    <i data-feather="dollar-sign" class="text-indigo-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <canvas id="statsChart" height="300"></canvas>
+                    </div>
+                </div>
+
+                <!-- Users Section -->
+                <div id="users" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                    <h2 class="text-2xl font-bold text-indigo-900 mb-6">Пользователи</h2>
+                    
+                    <div class="mb-4 flex justify-between items-center">
+                        <div class="relative w-64">
+                            <input type="text" placeholder="Поиск пользователей" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <i data-feather="search" class="absolute left-3 top-2.5 text-gray-400"></i>
+                        </div>
+                        <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 flex items-center">
+                            <i data-feather="plus" class="mr-2"></i> Добавить пользователя
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead>
+                                <tr class="bg-indigo-50">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-indigo-900 uppercase">ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-indigo-900 uppercase">ФИО</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-indigo-900 uppercase">Телефон</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-indigo-900 uppercase">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-indigo-900 uppercase">Дата регистрации</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-indigo-900 uppercase">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">1</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">Иванов Иван</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">+7 (999) 123-45-67</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">ivanov@example.com</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">12.05.2023</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <button class="text-indigo-600 hover:text-indigo-900 mr-2">
+                                            <i data-feather="edit" class="w-4 h-4"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-900">
+                                            <i data-feather="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">2</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">Петрова Анна</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">+7 (987) 654-32-10</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">petrova@example.com</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">28.05.2023</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <button class="text-indigo-600 hover:text-indigo-900 mr-2">
+                                            <i data-feather="edit" class="w-4 h-4"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-900">
+                                            <i data-feather="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <custom-footer></custom-footer>
+    
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
