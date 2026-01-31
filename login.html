@@ -70,66 +70,83 @@
     <script src="components/navbar.js"></script>
     <script src="components/footer.js"></script>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            // Демо-логика для тестирования
-            let user;
-            
-            if (email === 'admin@test.ru' && password === '123456') {
-                user = {
-                    name: 'Алексей Кирсанов',
-                    email: email,
-                    role: 'admin',
-                    phone: '+7 (999) 123-45-67'
-                };
-            } else if (email === 'user@test.ru' && password === '123456') {
-                user = {
-                    name: 'Иван Петров',
-                    email: email,
-                    role: 'user',
-                    phone: '+7 (999) 987-65-43'
-                };
-            } else {
-                // В реальном проекте здесь будет проверка на сервере
-                // Для демо - создаем нового пользователя
-                user = {
-                    name: email.split('@')[0],
-                    email: email,
-                    role: 'user',
-                    phone: ''
-                };
-            }
-            
-            // Сохраняем в localStorage
-            localStorage.setItem('user', JSON.stringify(user));
-            localStorage.setItem('isLoggedIn', 'true');
-            
-            // Если выбрано "запомнить меня"
-            if (document.getElementById('remember').checked) {
-                localStorage.setItem('remember', 'true');
-            }
-            
-            alert('Вход успешен!');
-            window.location.href = '/profile.html';
-        });
+  // Инициализация Firebase (используем твой конфиг из Firebase Console)
+  const firebaseConfig = {
+    apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
+    authDomain: "minde-31a83.firebaseapp.com",
+    projectId: "minde-31a83",
+    storageBucket: "minde-31a83.appspot.com",
+    messagingSenderId: "1003108983817",
+    appId: "1:1003108983817:web:494ede688023c73667c4d8"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const remember = document.getElementById('remember').checked;
+
+    if (!email || !password) {
+      alert('Пожалуйста, заполните email и пароль');
+      return;
+    }
+
+    auth.signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
         
-        // Автозаполнение для демо
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const demo = urlParams.get('demo');
-            
-            if (demo === 'user') {
-                document.getElementById('email').value = 'user@test.ru';
-                document.getElementById('password').value = '123456';
-            } else if (demo === 'admin') {
-                document.getElementById('email').value = 'admin@test.ru';
-                document.getElementById('password').value = '123456';
+        // Сохраняем UID для последующих запросов
+        localStorage.setItem('uid', user.uid);
+        if (remember) {
+          localStorage.setItem('rememberMe', 'true');
+        }
+
+        // Проверим, есть ли пользователь в Firestore (если нет — создадим)
+        return db.collection('users').doc(user.uid).get()
+          .then(doc => {
+            if (!doc.exists) {
+              // Создаём запись пользователя при первом входе
+              return db.collection('users').doc(user.uid).set({
+                email: email,
+                role: 'client',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                name: email.split('@')[0]
+              });
             }
-        });
-    </script>
+          });
+      })
+      .then(() => {
+        alert('Вход выполнен успешно!');
+        window.location.href = '/profile.html';
+      })
+      .catch((error) => {
+        console.error("Ошибка входа:", error);
+        let msg = error.message;
+        if (msg.includes('invalid-email')) msg = 'Некорректный email';
+        if (msg.includes('wrong-password')) msg = 'Неверный пароль';
+        if (msg.includes('user-not-found')) msg = 'Пользователь не найден';
+        alert('Ошибка: ' + msg);
+      });
+  });
+
+  // Автозаполнение для демо (оставляем как есть)
+  document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const demo = urlParams.get('demo');
+    
+    if (demo === 'user') {
+      document.getElementById('email').value = 'user@test.ru';
+      document.getElementById('password').value = '123456';
+    } else if (demo === 'admin') {
+      document.getElementById('email').value = 'admin@test.ru';
+      document.getElementById('password').value = '123456';
+    }
+  });
+</script>
 </body>
 </html>

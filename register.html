@@ -80,32 +80,68 @@
     <script src="components/navbar.js"></script>
     <script src="components/footer.js"></script>
     <script>
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if (password !== confirmPassword) {
-                alert('Пароли не совпадают!');
-                return;
-            }
-            
-            // В реальном проекте здесь будет отправка на сервер
-            const user = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                role: document.getElementById('role').value
-            };
-            
-            // Сохраняем в localStorage для демо
-            localStorage.setItem('user', JSON.stringify(user));
-            localStorage.setItem('isLoggedIn', 'true');
-            
-            alert('Регистрация успешна! Добро пожаловать!');
-            window.location.href = '/profile.html';
+  // Инициализация Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
+    authDomain: "minde-31a83.firebaseapp.com",
+    projectId: "minde-31a83",
+    storageBucket: "minde-31a83.appspot.com",
+    messagingSenderId: "1003108983817",
+    appId: "1:1003108983817:web:494ede688023c73667c4d8"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  document.getElementById('registerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const phone = document.getElementById('phone').value;
+    const role = document.getElementById('role').value;
+    const agree = document.getElementById('agreeTerms').checked;
+
+    if (!agree) {
+      alert('Пожалуйста, согласитесь с политикой конфиденциальности');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert('Пароли не совпадают!');
+      return;
+    }
+
+    // Регистрация через Firebase Auth
+    auth.createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+
+        // Сохраняем данные в Firestore
+        return db.collection('users').doc(user.uid).set({
+          name: name,
+          email: email,
+          phone: phone || null,
+          role: role,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-    </script>
+      })
+      .then(() => {
+        localStorage.setItem('uid', auth.currentUser.uid);
+        alert('Регистрация успешна! Добро пожаловать.');
+        window.location.href = '/profile.html';
+      })
+      .catch((error) => {
+        console.error("Ошибка регистрации:", error);
+        let msg = error.message;
+        if (msg.includes('email-already-in-use')) msg = 'Этот email уже зарегистрирован';
+        if (msg.includes('weak-password')) msg = 'Пароль слишком слабый (мин. 6 символов)';
+        alert('Ошибка регистрации: ' + msg);
+      });
+  });
+</script>
 </body>
 </html>
