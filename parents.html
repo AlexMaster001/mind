@@ -8,64 +8,101 @@
 </head>
 <body>
     <custom-navbar></custom-navbar>
+    
+    <!-- Spacer для фиксированной навигации -->
+    <div class="nav-spacer"></div>
 
     <main class="container">
         <section class="hero">
             <h1>Поддержка родителей</h1>
             <p>Практические материалы для родителей подростков</p>
             <div class="author-signature">
-              <p>Подготовлено Алексеем Кирсановым, психологом с 8-летним опытом работы с подростками и семьями.</p>
+                <p>Подготовлено Алексеем Кирсановым, психологом с 8-летним опытом работы с подростками и семьями.</p>
             </div>
-</section>
-            <h2>Категории материалов</h2>
-<div class="categories-grid">
-                <article class="category-card">
-                    <h3>Общение</h3>
-                    <p>Как выстроить доверительный диалог с подростком</p>
-                    <a href="/communication.html" class="button">Читать</a>
-                </article>
-                <article class="category-card">
-                    <h3>Эмоции подростка</h3>
-                    <p>Как помочь ребенку справляться с эмоциональными перегрузками</p>
-                    <a href="/emotions.html" class="button">Читать</a>
-                </article>
-                <article class="category-card">
-                    <h3>Кризисные ситуации</h3>
-                    <p>Что делать в сложных моментах взросления</p>
-                    <a href="/crisis.html" class="button">Читать</a>
-                </article>
-</div>
         </section>
-        <section class="education-section">
-            <h2>Кружок "Свободный кубик"</h2>
-            <p>Развивающие занятия для детей с элементами психологической поддержки</p>
+
+        <section class="card">
+            <h2>Категории материалов</h2>
+            
+            <div class="categories-grid">
+                <article class="category-card">
+                    <h3>👨‍👩‍👧‍👦 Общение с подростком</h3>
+                    <p>Как выстроить доверительный диалог, избежать конфликтов и понимать друг друга</p>
+                    <a href="#" class="button" onclick="alert('Материалы в разработке')">Читать статьи</a>
+                </article>
+                
+                <article class="category-card">
+                    <h3>😔 Эмоции подростка</h3>
+                    <p>Как помочь ребенку справляться с эмоциональными перегрузками, тревогой и стрессом</p>
+                    <a href="#" class="button" onclick="alert('Материалы в разработке')">Читать статьи</a>
+                </article>
+                
+                <article class="category-card">
+                    <h3>⚠️ Кризисные ситуации</h3>
+                    <p>Что делать в сложных моментах взросления: буллинг, зависимости, проблемы в школе</p>
+                    <a href="#" class="button" onclick="alert('Материалы в разработке')">Читать статьи</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="education-section card">
+            <h2>🎨 Кружок "Свободный кубик"</h2>
+            <p>Развивающие занятия для детей 3-12 лет с элементами арт-терапии и психологической поддержки</p>
+            
             <div class="club-registration">
-                <form class="club-form">
+                <form class="club-form" id="clubForm">
                     <div class="form-group">
-                        <label for="parent-name">Имя родителя</label>
+                        <label for="parent-name">Имя родителя *</label>
                         <input type="text" id="parent-name" required>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="child-name">Имя ребенка</label>
+                        <label for="child-name">Имя ребенка *</label>
                         <input type="text" id="child-name" required>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="child-age">Возраст ребенка</label>
+                        <label for="child-age">Возраст ребенка *</label>
                         <input type="number" id="child-age" min="3" max="12" required>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="contact">Контактный телефон</label>
+                        <label for="contact">Контактный телефон *</label>
                         <input type="tel" id="contact" required>
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email для связи</label>
+                        <input type="email" id="email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" required>
+                            Я согласен на обработку персональных данных
+                        </label>
+                    </div>
+                    
                     <button type="submit" class="button">Записаться в кружок</button>
                 </form>
             </div>
         </section>
-<p class="signature">Материалы подготовлены Кирсановым Алексеем психологом. Все рекомендации носят общий характер и не заменяют индивидуальной консультации.</p>
+        
+        <p class="signature">
+            Материалы подготовлены Кирсановым Алексеем, психологом. Все рекомендации носят общий характер и не заменяют индивидуальной консультации.
+        </p>
     </main>
-<custom-footer></custom-footer>
+
+    <custom-footer></custom-footer>
     
     <script src="components/navbar.js"></script>
     <script src="components/footer.js"></script>
+    <script>
+        document.getElementById('clubForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Спасибо за заявку! Мы свяжемся с вами в течение 24 часов.');
+            this.reset();
+        });
+    </script>
 </body>
 </html>

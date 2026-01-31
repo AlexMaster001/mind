@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет | Тихая поддержка</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <custom-navbar></custom-navbar>
+    
+    <!-- Spacer для фиксированной навигации -->
+    <div class="nav-spacer"></div>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Личный кабинет</h1>
+            <p>Здесь вы можете управлять своими данными и просматривать историю тестов</p>
+        </section>
+
+        <div id="profileContent">
+            <!-- Контент будет загружен через JavaScript -->
+            <div class="card text-center" style="padding: 3rem;">
+                <h3>Загрузка профиля...</h3>
+            </div>
+        </div>
+    </main>
+
+    <custom-footer></custom-footer>
+    
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileContent = document.getElementById('profileContent');
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!isLoggedIn || !user.name) {
+                profileContent.innerHTML = `
+                    <div class="card text-center" style="padding: 3rem;">
+                        <h3>Доступ запрещен</h3>
+                        <p>Пожалуйста, войдите в систему для доступа к личному кабинету.</p>
+                        <a href="/login.html" class="button">Войти</a>
+                        <a href="/register.html" class="secondary-button ml-2">Зарегистрироваться</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            
+            // Демо-данные для истории тестов
+            const testHistory = [
+                { id: 1, name: 'Тест на тревожность', date: '2024-01-15', result: 'Средний уровень', score: '12/21' },
+                { id: 2, name: 'Тест на выгорание', date: '2024-01-10', result: 'Низкий уровень', score: '25%' },
+                { id: 3, name: 'Детско-родительские отношения', date: '2024-01-05', result: 'Анализ завершен', score: '-' }
+            ];
+            
+            profileContent.innerHTML = `
+                <div class="profile-header">
+                    <div class="profile-avatar">${initials}</div>
+                    <div class="profile-info">
+                        <h2>${user.name}</h2>
+                        <p>${user.email}</p>
+                        <p>${user.phone || 'Телефон не указан'}</p>
+                        <p><strong>Роль:</strong> ${user.role === 'admin' ? 'Администратор' : 'Пользователь'}</p>
+                    </div>
+                </div>
+                
+                <div class="test-history card mt-4">
+                    <h3>История тестов</h3>
+                    ${testHistory.length > 0 ? `
+                        <table class="w-100">
+                            <thead>
+                                <tr>
+                                    <th>Тест</th>
+                                    <th>Дата</th>
+                                    <th>Результат</th>
+                                    <th>Баллы</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${testHistory.map(test => `
+                                    <tr>
+                                        <td>${test.name}</td>
+                                        <td>${test.date}</td>
+                                        <td>${test.result}</td>
+                                        <td>${test.score}</td>
+                                        <td>
+                                            <a href="/tests/tests.html" class="auth-link">Повторить</a>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    ` : `
+                        <p class="text-center">Вы еще не проходили тесты. <a href="/tests/tests.html">Начните сейчас</a></p>
+                    `}
+                </div>
+                
+                <div class="card mt-4">
+                    <h3>Настройки профиля</h3>
+                    <form id="profileForm" class="register-form">
+                        <div class="form-group">
+                            <label for="profileName">Имя</label>
+                            <input type="text" id="profileName" value="${user.name}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profileEmail">Email</label>
+                            <input type="email" id="profileEmail" value="${user.email}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profilePhone">Телефон</label>
+                            <input type="tel" id="profilePhone" value="${user.phone || ''}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newPassword">Новый пароль (оставьте пустым, если не хотите менять)</label>
+                            <input type="password" id="newPassword">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmNewPassword">Подтвердите новый пароль</label>
+                            <input type="password" id="confirmNewPassword">
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="button">Сохранить изменения</button>
+                            <button type="button" id="logoutBtn" class="secondary-button ml-2">Выйти</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            // Обработчик формы
+            document.getElementById('profileForm')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+                
+                if (newPassword && newPassword !== confirmNewPassword) {
+                    alert('Пароли не совпадают!');
+                    return;
+                }
+                
+                // Обновляем данные пользователя
+                const updatedUser = {
+                    ...user,
+                    name: document.getElementById('profileName').value,
+                    email: document.getElementById('profileEmail').value,
+                    phone: document.getElementById('profilePhone').value
+                };
+                
+                if (newPassword) {
+                    alert('Пароль изменен (в демо-версии изменения не сохраняются)');
+                }
+                
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                alert('Профиль обновлен!');
+                window.location.reload();
+            });
+            
+            // Кнопка выхода
+            document.getElementById('logoutBtn')?.addEventListener('click', function() {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('user');
+                window.location.href = '/';
+            });
+        });
+    </script>
+</body>
+</html>

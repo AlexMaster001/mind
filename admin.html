@@ -1,166 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Админ панель | MindMender Therapy Hub</title>
+    <title>Админ-панель | Тихая поддержка</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-indigo-50">
+<body>
     <custom-navbar></custom-navbar>
+    
+    <!-- Spacer для фиксированной навигации -->
+    <div class="nav-spacer"></div>
 
-    <div class="container mx-auto px-4 py-8">
-        <div class="flex flex-col lg:flex-row gap-8">
-            <!-- Admin Sidebar -->
-            <div class="lg:w-1/5 bg-white rounded-xl shadow-lg p-6 h-fit">
-                <div class="text-center mb-6">
-                    <div class="w-24 h-24 rounded-full bg-indigo-100 mx-auto mb-4 overflow-hidden">
-                        <img src="https://huggingface.co/spaces/Alex01010101010/mindmender-therapy-hub/resolve/main/images/Аватар.jpg" alt="Администратор" class="w-full h-full object-cover" style="object-position: center 30%;">
-</div>
-                    <h2 class="text-xl font-bold text-indigo-900">Администратор</h2>
-                </div>
+    <main class="container">
+        <section class="hero">
+            <h1>Админ-панель</h1>
+            <p>Управление контентом и пользователями</p>
+        </section>
 
-                <nav class="space-y-2">
-                    <a href="#dashboard" class="flex items-center px-4 py-2 text-indigo-600 bg-indigo-50 rounded-lg">
-                        <i data-feather="home" class="mr-3"></i> Панель управления
-                    </a>
-                    <a href="#users" class="flex items-center px-4 py-2 text-gray-600 hover:bg-indigo-50 rounded-lg">
-                        <i data-feather="users" class="mr-3"></i> Пользователи
-                    </a>
-                    <a href="#appointments" class="flex items-center px-4 py-2 text-gray-600 hover:bg-indigo-50 rounded-lg">
-                        <i data-feather="calendar" class="mr-3"></i> Записи
-                    </a>
-                    <a href="#reports" class="flex items-center px-4 py-2 text-gray-600 hover:bg-indigo-50 rounded-lg">
-                        <i data-feather="pie-chart" class="mr-3"></i> Отчеты
-                    </a>
-                    <a href="#settings" class="flex items-center px-4 py-2 text-gray-600 hover:bg-indigo-50 rounded-lg">
-                        <i data-feather="settings" class="mr-3"></i> Настройки
-                    </a>
-                    <a href="/login.html" class="flex items-center px-4 py-2 text-gray-600 hover:bg-indigo-50 rounded-lg">
-                        <i data-feather="log-out" class="mr-3"></i> Выйти
-                    </a>
-                </nav>
-            </div>
-
-            <!-- Main Content -->
-            <div class="lg:w-4/5">
-                <!-- Dashboard Section -->
-                <div id="dashboard" class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                    <h2 class="text-2xl font-bold text-indigo-900 mb-6">Панель управления</h2>
-                    
-                    <div class="grid md:grid-cols-3 gap-6 mb-8">
-                        <div class="bg-indigo-50 rounded-xl p-6">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-gray-600">Всего пользователей</p>
-                                    <p class="text-3xl font-bold text-indigo-900">124</p>
-                                </div>
-                                <div class="bg-indigo-100 p-3 rounded-full">
-                                    <i data-feather="users" class="text-indigo-600"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-indigo-50 rounded-xl p-6">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-gray-600">Новые записи</p>
-                                    <p class="text-3xl font-bold text-indigo-900">24</p>
-                                </div>
-                                <div class="bg-indigo-100 p-3 rounded-full">
-                                    <i data-feather="calendar" class="text-indigo-600"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-indigo-50 rounded-xl p-6">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-gray-600">Доход за месяц</p>
-                                    <p class="text-3xl font-bold text-indigo-900">56,400 ₽</p>
-                                </div>
-                                <div class="bg-indigo-100 p-3 rounded-full">
-                                    <i data-feather="dollar-sign" class="text-indigo-600"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <canvas id="statsChart" height="300"></canvas>
-                    </div>
-                </div>
-
-                <!-- Users Section -->
-                <div id="users" class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                    <h2 class="text-2xl font-bold text-indigo-900 mb-6">Пользователи</h2>
-                    
-                    <div class="mb-4 flex justify-between items-center">
-                        <div class="relative w-64">
-                            <input type="text" placeholder="Поиск пользователей" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            <i data-feather="search" class="absolute left-3 top-2.5 text-gray-400"></i>
-                        </div>
-                        <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 flex items-center">
-                            <i data-feather="plus" class="mr-2"></i> Добавить пользователя
-                        </button>
-                    </div>
-                    
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full">
-                            <thead>
-                                <tr class="bg-indigo-50">
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-indigo-900 uppercase">ID</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-indigo-900 uppercase">ФИО</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-indigo-900 uppercase">Телефон</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-indigo-900 uppercase">Email</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-indigo-900 uppercase">Дата регистрации</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-indigo-900 uppercase">Действия</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">1</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">Иванов Иван</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">+7 (999) 123-45-67</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">ivanov@example.com</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">12.05.2023</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <button class="text-indigo-600 hover:text-indigo-900 mr-2">
-                                            <i data-feather="edit" class="w-4 h-4"></i>
-                                        </button>
-                                        <button class="text-red-600 hover:text-red-900">
-                                            <i data-feather="trash-2" class="w-4 h-4"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">2</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">Петрова Анна</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">+7 (987) 654-32-10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">petrova@example.com</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">28.05.2023</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <button class="text-indigo-600 hover:text-indigo-900 mr-2">
-                                            <i data-feather="edit" class="w-4 h-4"></i>
-                                        </button>
-                                        <button class="text-red-600 hover:text-red-900">
-                                            <i data-feather="trash-2" class="w-4 h-4"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        <div id="adminContent">
+            <!-- Контент будет загружен через JavaScript -->
+            <div class="card text-center" style="padding: 3rem;">
+                <h3>Проверка доступа...</h3>
             </div>
         </div>
-    </div>
+    </main>
 
     <custom-footer></custom-footer>
     
     <script src="components/navbar.js"></script>
     <script src="components/footer.js"></script>
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminContent = document.getElementById('adminContent');
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!isLoggedIn || !user.name || user.role !== 'admin') {
+                adminContent.innerHTML = `
+                    <div class="card text-center" style="padding: 3rem;">
+                        <h3>Доступ запрещен</h3>
+                        <p>У вас нет прав для доступа к админ-панели.</p>
+                        <a href="/" class="button">На главную</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Демо-статистика
+            const stats = {
+                totalUsers: 42,
+                totalTests: 156,
+                activeToday: 8,
+                averageScore: 68
+            };
+            
+            // Демо-пользователи
+            const users = [
+                { id: 1, name: 'Иван Петров', email: 'ivan@test.ru', role: 'user', tests: 5, lastActive: '2024-01-15' },
+                { id: 2, name: 'Мария Сидорова', email: 'maria@test.ru', role: 'user', tests: 3, lastActive: '2024-01-14' },
+                { id: 3, name: 'Алексей Кирсанов', email: 'alexey@test.ru', role: 'admin', tests: 12, lastActive: '2024-01-15' },
+                { id: 4, name: 'Екатерина Волкова', email: 'ekaterina@test.ru', role: 'parent', tests: 2, lastActive: '2024-01-13' }
+            ];
+            
+            adminContent.innerHTML = `
+                <div class="admin-grid">
+                    <div class="admin-card">
+                        <h3>📊 Статистика</h3>
+                        <p><strong>Всего пользователей:</strong> ${stats.totalUsers}</p>
+                        <p><strong>Всего тестов пройдено:</strong> ${stats.totalTests}</p>
+                        <p><strong>Активных сегодня:</strong> ${stats.activeToday}</p>
+                        <p><strong>Средний балл:</strong> ${stats.averageScore}%</p>
+                    </div>
+                    
+                    <div class="admin-card">
+                        <h3>🚀 Быстрые действия</h3>
+                        <button class="button w-100 mb-2" onclick="alert('Функция в разработке')">
+                            Добавить новый тест
+                        </button>
+                        <button class="secondary-button w-100 mb-2" onclick="alert('Функция в разработке')">
+                            Редактировать материалы
+                        </button>
+                        <button class="secondary-button w-100" onclick="alert('Функция в разработке')">
+                            Отправить рассылку
+                        </button>
+                    </div>
+                    
+                    <div class="admin-card">
+                        <h3>🔔 Последние действия</h3>
+                        <ul style="padding-left: 1.5rem;">
+                            <li>Иван Петров прошел тест на тревожность (5 мин назад)</li>
+                            <li>Новый пользователь зарегистрирован (1 час назад)</li>
+                            <li>Мария Сидорова записалась в кружок (2 часа назад)</li>
+                            <li>Обновлены материалы для родителей (вчера)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mt-4">
+                    <h3>👥 Управление пользователями</h3>
+                    <table class="w-100">
+                        <thead>
+                            <tr style="background: #f5f5f5;">
+                                <th style="padding: 0.75rem; text-align: left;">Имя</th>
+                                <th style="padding: 0.75rem; text-align: left;">Email</th>
+                                <th style="padding: 0.75rem; text-align: left;">Роль</th>
+                                <th style="padding: 0.75rem; text-align: left;">Тестов</th>
+                                <th style="padding: 0.75rem; text-align: left;">Последняя активность</th>
+                                <th style="padding: 0.75rem; text-align: left;">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${users.map(user => `
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 0.75rem;">${user.name}</td>
+                                    <td style="padding: 0.75rem;">${user.email}</td>
+                                    <td style="padding: 0.75rem;">
+                                        <select class="w-100" style="padding: 0.25rem 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                                            <option value="user" ${user.role === 'user' ? 'selected' : ''}>Пользователь</option>
+                                            <option value="parent" ${user.role === 'parent' ? 'selected' : ''}>Родитель</option>
+                                            <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Администратор</option>
+                                        </select>
+                                    </td>
+                                    <td style="padding: 0.75rem;">${user.tests}</td>
+                                    <td style="padding: 0.75rem;">${user.lastActive}</td>
+                                    <td style="padding: 0.75rem;">
+                                        <button class="auth-link" onclick="alert('Редактирование ${user.name}')">
+                                            Редактировать
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="card mt-4">
+                    <h3>⚙️ Настройки системы</h3>
+                    <form id="systemSettings" class="register-form">
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked>
+                                Разрешить регистрацию новых пользователей
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked>
+                                Отправлять email-уведомления
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox">
+                                Требовать подтверждение email
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="siteTitle">Название сайта</label>
+                            <input type="text" id="siteTitle" value="Тихая поддержка">
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="button">Сохранить настройки</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            // Обработчик формы настроек
+            document.getElementById('systemSettings')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Настройки сохранены (в демо-версии изменения не применяются)');
+            });
+        });
+    </script>
 </body>
 </html>

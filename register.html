@@ -1,56 +1,111 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация | MindMender Therapy Hub</title>
+    <title>Регистрация | Тихая поддержка</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 </head>
-<body class="bg-indigo-50">
+<body>
     <custom-navbar></custom-navbar>
+    
+    <div class="nav-spacer"></div>
 
-    <div class="container mx-auto px-4 py-16 max-w-md">
-        <div class="bg-white rounded-xl shadow-lg p-8">
-            <h1 class="text-3xl font-bold text-indigo-900 mb-6 text-center">Регистрация</h1>
-            
-            <form id="registerForm" class="space-y-4">
-                <div>
-                    <label for="name" class="block text-gray-700 mb-2">Имя</label>
-                    <input type="text" id="name" name="name" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+    <main class="container">
+        <section class="hero">
+            <h1>Регистрация</h1>
+            <p>Создайте личный кабинет для сохранения результатов тестов</p>
+        </section>
+
+        <section class="card">
+            <div class="author-signature">
+                <p>Регистрация позволит вам сохранять историю тестов и получать персональные рекомендации</p>
+            </div>
+
+            <form id="registerForm" class="register-form">
+                <div class="form-group">
+                    <label for="name">Имя и фамилия *</label>
+                    <input type="text" id="name" name="name" required placeholder="Алексей Кирсанов">
                 </div>
                 
-                <div>
-                    <label for="email" class="block text-gray-700 mb-2">Email</label>
-                    <input type="email" id="email" name="email" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required placeholder="example@mail.ru">
                 </div>
                 
-                <div>
-                    <label for="password" class="block text-gray-700 mb-2">Пароль</label>
-                    <input type="password" id="password" name="password" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <div class="form-group">
+                    <label for="password">Пароль *</label>
+                    <input type="password" id="password" name="password" required minlength="6" placeholder="Не менее 6 символов">
                 </div>
                 
-                <div>
-                    <label for="phone" class="block text-gray-700 mb-2">Телефон</label>
-                    <input type="tel" id="phone" name="phone" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <div class="form-group">
+                    <label for="confirmPassword">Подтвердите пароль *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
                 </div>
                 
-                <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition duration-300">
+                <div class="form-group">
+                    <label for="phone">Телефон (необязательно)</label>
+                    <input type="tel" id="phone" name="phone" placeholder="+7 (999) 123-45-67">
+                </div>
+                
+                <div class="form-group">
+                    <label for="role">Я регистрируюсь как:</label>
+                    <select id="role" name="role">
+                        <option value="user">Пользователь (прохожу тесты)</option>
+                        <option value="parent">Родитель (ищу материалы)</option>
+                        <option value="admin">Администратор (только по приглашению)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                        Я согласен с <a href="/privacy.html">политикой конфиденциальности</a> и даю согласие на обработку персональных данных
+                    </label>
+                </div>
+                
+                <button type="submit" class="button w-100">
                     Зарегистрироваться
                 </button>
                 
-                <p class="text-center text-gray-600">
-                    Уже есть аккаунт? <a href="/login.html" class="text-indigo-600 hover:underline">Войти</a>
+                <p class="text-center mt-3">
+                    Уже есть аккаунт? <a href="/login.html">Войти</a>
                 </p>
             </form>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <custom-footer></custom-footer>
     
     <script src="components/navbar.js"></script>
     <script src="components/footer.js"></script>
-    <script src="script.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                alert('Пароли не совпадают!');
+                return;
+            }
+            
+            // В реальном проекте здесь будет отправка на сервер
+            const user = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                role: document.getElementById('role').value
+            };
+            
+            // Сохраняем в localStorage для демо
+            localStorage.setItem('user', JSON.stringify(user));
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            alert('Регистрация успешна! Добро пожаловать!');
+            window.location.href = '/profile.html';
+        });
+    </script>
 </body>
 </html>

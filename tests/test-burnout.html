@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тест на выгорание | Тихая поддержка</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
     <custom-navbar></custom-navbar>
@@ -16,6 +16,10 @@
         </section>
 
         <section class="card test-container">
+            <div class="author-signature">
+                <p>Тест на основе методики Copenhagen Burnout Inventory (CBI)</p>
+            </div>
+
             <div class="test-intro">
                 <h2>Инструкция</h2>
                 <p>Оцените, насколько каждое утверждение соответствует вашему состоянию в последнее время.</p>
@@ -101,12 +105,16 @@
                 </div>
             </div>
         </section>
+        
+        <p class="signature">
+            Тест подготовлен Кирсановым Алексеем, психологом. Для точной диагностики обратитесь к специалисту.
+        </p>
     </main>
 
     <custom-footer></custom-footer>
     
-    <script src="components/navbar.js"></script>
-    <script src="components/footer.js"></script>
+    <script src="../components/navbar.js"></script>
+    <script src="../components/footer.js"></script>
     <script>
         document.getElementById('burnoutTestForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -130,14 +138,36 @@
             } else if (average <= 50) {
                 resultText = `<p><strong>${average}%: умеренный уровень выгорания</strong></p>
                 <p>Вы испытываете некоторое истощение. Рекомендуется обратить внимание на режим дня, качество отдыха и методы управления стрессом.</p>`;
-            } else {
+            } else if (average <= 75) {
                 resultText = `<p><strong>${average}%: высокий уровень выгорания</strong></p>
                 <p>Вы испытываете значительное истощение. Это может влиять на ваше здоровье и качество жизни. Рекомендуется обратиться за профессиональной помощью и пересмотреть свою нагрузку.</p>`;
+            } else {
+                resultText = `<p><strong>${average}%: критический уровень выгорания</strong></p>
+                <p>Ваш уровень истощения очень высок. Настоятельно рекомендуется обратиться за профессиональной помощью и немедленно снизить нагрузку.</p>`;
+            }
+
+            // Сохраняем результат, если пользователь авторизован
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (isLoggedIn) {
+                const testResult = {
+                    testName: 'Тест на эмоциональное выгорание (CBI)',
+                    date: new Date().toISOString().split('T')[0],
+                    score: average,
+                    maxScore: 100,
+                    interpretation: average < 25 ? 'низкий уровень' : 
+                                  average <= 50 ? 'умеренный уровень' : 
+                                  average <= 75 ? 'высокий уровень' : 'критический уровень'
+                };
+                
+                // Сохраняем в историю
+                const history = JSON.parse(localStorage.getItem('testHistory') || '[]');
+                history.push(testResult);
+                localStorage.setItem('testHistory', JSON.stringify(history));
             }
 
             document.getElementById('resultText').innerHTML = resultText;
             document.getElementById('testResults').style.display = 'block';
-            window.scrollTo(0, document.getElementById('testResults').offsetTop);
+            window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
         });
     </script>
 </body>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест на тревожность | Тихая поддержка</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <custom-navbar></custom-navbar>
+    
+    <!-- Spacer для фиксированной навигации -->
+    <div class="nav-spacer"></div>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Тест на тревожность (GAD-7)</h1>
+            <p>Оцените уровень своей тревожности за последние 2 недели</p>
+        </section>
+
+        <section class="card test-container">
+            <div class="author-signature">
+                <p>Тест подготовлен на основе методики GAD-7 (Generalized Anxiety Disorder)</p>
+            </div>
+
+            <div class="test-intro">
+                <h2>Инструкция</h2>
+                <p>Ниже приведены утверждения, описывающие, как вы себя чувствовали за последние две недели. Отметьте, насколько часто каждое из них было характерно для вас.</p>
+            </div>
+
+            <form id="anxietyTestForm" class="test-form">
+                <!-- ... остальная часть формы теста ... -->
+                <button type="submit" class="button">Получить результаты</button>
+            </form>
+
+            <div id="testResults" class="test-results" style="display: none;">
+                <h2>Ваши результаты</h2>
+                <div id="resultText"></div>
+                <div class="disclaimer">
+                    <h3>Важная информация</h3>
+                    <p>Этот тест — инструмент самооценки, а не медицинский диагноз. Результаты не могут быть использованы для постановки диагноза или назначения лечения.</p>
+                    <p>Если вы испытываете сильный стресс, тревогу, чувство безысходности или мысли о самоповреждении — обратитесь к лицензированному психологу или психиатру. Вы имеете право на поддержку — не только в кризис, но и до него.</p>
+                </div>
+            </div>
+        </section>
+        
+        <p class="signature">
+            Тест подготовлен Кирсановым Алексеем, психологом. Для точной диагностики обратитесь к специалисту.
+        </p>
+    </main>
+
+    <custom-footer></custom-footer>
+    
+    <script src="../components/navbar.js"></script>
+    <script src="../components/footer.js"></script>
+    <script>
+        // JavaScript код теста остается таким же
+    </script>
+</body>
+</html>

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -8,38 +7,31 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <nav role="navigation">
-                <div class="logo">Тихая поддержка</div>
-                <ul>
-                    <li><a href="/" aria-current="page">Главная</a></li>
-                    <li><a href="/tests.html">Тесты</a></li>
-                    <li><a href="/parents.html">Для родителей</a></li>
-                    <li><a href="/contacts.html">Контакты</a></li>
-                </ul>
-            </nav>
-</div>
-    </header>
+    <custom-navbar></custom-navbar>
+    
+    <!-- Spacer для фиксированной навигации -->
+    <div class="nav-spacer"></div>
 
     <section class="hero">
         <div class="container">
             <h1>Понимание начинается с вопроса</h1>
             <p>Вы не одни.<br>Начните с вопроса - и я помогу вам найти ответ.<br>Без спешки. Без оценок. Вместе.</p>
-<div class="author-signature">
-              <p>Подготовлено Алексеем Кирсановым, психологом с 8-летним опытом работы с подростками и семьями.</p>
+            
+            <div class="author-signature">
+                <p>Подготовлено Алексеем Кирсановым, психологом с 8-летним опытом работы с подростками и семьями.</p>
             </div>
 
             <div class="cta-buttons" role="group" aria-label="Основные действия">
-                <a href="/tests.html" class="button">Пройти тест</a>
+                <a href="/tests/tests.html" class="button">Пройти тест</a>
                 <a href="/parents.html" class="secondary-button">Для родителей</a>
             </div>
+            
             <p class="ethics-note">
-              Все тесты носят исключительно информационный характер и не заменяют очную консультацию. 
-              Ваши данные защищены - мы не передаём их третьим лицам.
+                Все тесты носят исключительно информационный характер и не заменяют очную консультацию. 
+                Ваши данные защищены - мы не передаём их третьим лицам.
             </p>
-</div>
-</section>
+        </div>
+    </section>
 
     <section class="feature-section">
         <div class="container">
@@ -67,13 +59,10 @@
             <a href="/parents.html" class="button">Перейти в раздел</a>
         </div>
     </section>
-    <footer>
-        <div class="container">
-            <p>© 2023 Тихая поддержка. Все права защищены.</p>
-            <p>Вы можете быть уверены: ваши ответы только между вами и мной. Я не храню персональные данные и не передаю их никому.</p>
-            <p>Этот сайт создан, чтобы помочь, а не заменить живую консультацию. Все тесты носят информационный характер.</p>
-            <p>Я следую принципам психологической этики: конфиденциальность, добровольность и уважение к вашим границам.</p>
-</div>
-    </footer>
+
+    <custom-footer></custom-footer>
+
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
 </body>
 </html>

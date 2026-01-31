@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тесты | Тихая поддержка</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <custom-navbar></custom-navbar>
+    
+    <!-- Spacer для фиксированной навигации -->
+    <div class="nav-spacer"></div>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Психологические тесты</h1>
+            <p>Анонимные тесты с профессиональной обратной связью</p>
+        </section>
+
+        <section class="card">
+            <div class="author-signature">
+                <p>Подготовлено Алексеем Кирсановым, психологом с 8-летним опытом работы с подростками и семьями.</p>
+            </div>
+            
+            <h2>Доступные тесты</h2>
+            
+            <div class="tests-grid">
+                <article class="test-card">
+                    <h3>Тест на тревожность (GAD-7)</h3>
+                    <p>Оцените уровень своей тревожности за последние 2 недели</p>
+                    <p><strong>7 вопросов · 3-5 минут</strong></p>
+                    <a href="test-anxiety.html" class="button">Пройти тест</a>
+                </article>
+                
+                <article class="test-card">
+                    <h3>Тест на эмоциональное выгорание (CBI)</h3>
+                    <p>Определите уровень своего истощения и усталости</p>
+                    <p><strong>6 вопросов · 5-7 минут</strong></p>
+                    <a href="test-burnout.html" class="button">Пройти тест</a>
+                </article>
+                
+                <article class="test-card">
+                    <h3>Детско-родительские отношения (EMBU-S)</h3>
+                    <p>Оцените стиль воспитания ваших родителей</p>
+                    <p><strong>12 вопросов · 8-10 минут</strong></p>
+                    <a href="test-parenting.html" class="button">Пройти тест</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="card mt-4">
+            <h2>Как это работает</h2>
+            <ol class="steps" style="padding-left: 1.5rem; margin-bottom: 2rem;">
+                <li style="margin-bottom: 0.5rem;">Выберите тест и ответьте на вопросы</li>
+                <li style="margin-bottom: 0.5rem;">Получите моментальные результаты</li>
+                <li style="margin-bottom: 0.5rem;">Прочитайте рекомендации специалиста</li>
+            </ol>
+            
+            <p class="note" style="background: #f0f7ff; padding: 1rem; border-radius: 8px; border-left: 4px solid #4a90e2;">
+                <strong>Важно:</strong> Ваши ответы анонимны и защищены. Мы не храним персональные данные.
+            </p>
+            
+            <p class="signature">
+                Материалы подготовлены Кирсановым Алексеем, психологом. Все рекомендации носят общий характер и не заменяют индивидуальной консультации.
+            </p>
+        </section>
+    </main>
+
+    <custom-footer></custom-footer>
+    
+    <script src="../components/navbar.js"></script>
+    <script src="../components/footer.js"></script>
+</body>
+</html>

@@ -1,14 +1,20 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Inter:wght@400;500&display=swap');
+
 :root {
   --bg-color: #F9F7F3;
   --text-color: #2D2B28;
   --accent-color: #C77966;
   --secondary-accent: #8A9B68;
+  --light-accent: #E8D7D2;
   --shadow: 0 4px 20px rgba(0,0,0,0.05);
   --shadow-hover: 0 8px 25px rgba(0,0,0,0.1);
   --border-radius: 16px;
 }
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-color);
@@ -17,7 +23,15 @@ body {
   line-height: 1.6;
   margin: 0;
   padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
+
+main {
+  flex: 1;
+}
+
 h1 {
   font-family: 'Manrope', sans-serif;
   font-weight: 700;
@@ -33,10 +47,18 @@ h2 {
   margin-bottom: 1rem;
 }
 
+h3 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
 p {
   font-size: 1.125rem;
   margin-bottom: 1rem;
 }
+
 a {
   color: var(--accent-color);
   text-decoration: none;
@@ -46,6 +68,7 @@ a {
 a:hover {
   opacity: 0.8;
 }
+
 .button,
 .secondary-button {
   display: inline-block;
@@ -56,10 +79,12 @@ a:hover {
   border-radius: 8px;
   transition: all 0.2s ease;
   cursor: pointer;
+  border: none;
+  font-family: 'Inter', sans-serif;
 }
 
 .button {
-  background-color: #C77966;
+  background-color: var(--accent-color);
   color: white;
   box-shadow: 0 4px 12px rgba(199, 121, 102, 0.2);
 }
@@ -72,28 +97,31 @@ a:hover {
 
 .secondary-button {
   background-color: transparent;
-  color: #C77966;
-  border: 2px solid #C77966;
+  color: var(--accent-color);
+  border: 2px solid var(--accent-color);
 }
 
 .secondary-button:hover {
   background-color: rgba(199, 121, 102, 0.05);
 }
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
+
 .card {
   background: white;
   padding: 1.75rem;
   border-radius: var(--border-radius);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow);
   transition: all 0.3s ease;
   border: 1px solid rgba(0,0,0,0.03);
   position: relative;
   overflow: hidden;
 }
+
 .card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-hover);
@@ -115,6 +143,7 @@ a:hover {
   transform: scale(1.2);
   opacity: 0.08;
 }
+
 .hero {
   padding: 120px 0;
   text-align: center;
@@ -134,6 +163,14 @@ a:hover {
   background-repeat: no-repeat;
   z-index: 1;
 }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
 .feature-section {
   background: white;
   padding: 4rem 0;
@@ -144,86 +181,15 @@ a:hover {
   padding: 4rem 0;
   position: relative;
 }
-.about-card {
-  max-width: 800px;
-  margin: 0 auto;
-}
 
-.about-content {
+.cta-buttons {
   display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.about-photo {
-  text-align: center;
-}
-.about-photo img {
-  border-radius: var(--border-radius);
-  width: 100%;
-  max-width: 400px;
-  height: auto;
-  aspect-ratio: 4/3;
-  object-fit: cover;
-  box-shadow: var(--shadow);
-}
-
-.profile-photo {
-  filter: grayscale(30%);
-  transition: all 0.5s ease;
-}
-
-.profile-photo:hover {
-  filter: grayscale(0%);
-  transform: scale(1.02);
-}
-.about-text h2 {
-  margin-top: 0;
-}
-
-.subtitle {
-  font-weight: 500;
-  color: var(--accent-color);
-  margin-bottom: 2rem;
-}
-.quote {
-  font-style: italic;
-  border-left: 3px solid var(--accent-color);
-  padding-left: 1rem;
+  gap: 1rem;
+  justify-content: center;
   margin: 2rem 0;
+  flex-wrap: wrap;
 }
 
-.club-registration {
-  max-width: 600px;
-  margin: 2rem auto;
-}
-
-.club-form {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-}
-
-.form-group input {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 1rem;
-}
-
-.form-group input:focus {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 2px;
-}
 .author-signature {
   font-size: 1.125rem;
   color: var(--text-color);
@@ -235,6 +201,272 @@ a:hover {
   border-left: 4px solid var(--accent-color);
   font-weight: 500;
 }
+
+.ethics-note {
+  font-size: 0.875rem;
+  color: #777;
+  margin-top: 2rem;
+  text-align: center;
+  line-height: 1.5;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Формы */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(199, 121, 102, 0.1);
+}
+
+/* Страница тестов */
+.test-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.test-intro {
+  margin-bottom: 2rem;
+}
+
+.test-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.question {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.question h3, .question h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.options label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.options label:hover {
+  background: rgba(199, 121, 102, 0.1);
+}
+
+.options input[type="radio"] {
+  margin: 0;
+}
+
+.test-results {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: #f9f9f9;
+  border-radius: var(--border-radius);
+  border-left: 4px solid var(--accent-color);
+}
+
+.disclaimer {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: rgba(255, 229, 229, 0.3);
+  border-radius: 8px;
+  border-left: 3px solid #ff6b6b;
+}
+
+/* Страница тестов (список) */
+.tests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.test-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.test-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.test-card h3 {
+  margin-top: 0;
+  color: var(--accent-color);
+}
+
+.test-card p {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+/* Страница для родителей */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.category-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.category-card h3 {
+  margin-top: 0;
+  color: var(--accent-color);
+}
+
+.category-card p {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+/* Кружок */
+.club-registration {
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+.club-form {
+  display: grid;
+  gap: 1.5rem;
+}
+
+/* Админ панель */
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.admin-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.admin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.admin-card h3 {
+  margin-top: 0;
+  color: var(--accent-color);
+}
+
+/* Профиль */
+.profile-header {
+  background: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.profile-info h2 {
+  margin-top: 0;
+}
+
+.test-history {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+}
+
+.test-history table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.test-history th,
+.test-history td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.test-history th {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
 .signature {
   font-size: 0.9rem;
   color: #666;
@@ -243,114 +475,6 @@ a:hover {
   font-style: italic;
 }
 
-.ethics-note {
-  font-size: 0.875rem;
-  color: #777;
-  margin-top: 1rem;
-  text-align: center;
-  line-height: 1.5;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.ethics-note {
-  font-size: 0.875rem;
-  color: #777;
-  margin-top: 1rem;
-  text-align: center;
-  line-height: 1.5;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.test-container {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.test-intro {
-    margin-bottom: 2rem;
-}
-
-.test-form {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-.article {
-    max-width: 800px;
-    margin: 0 auto;
-    line-height: 1.7;
-}
-
-.article h2 {
-    margin-top: 2rem;
-    color: var(--accent-color);
-}
-
-.article-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 3rem;
-    justify-content: center;
-}
-.question {
-    background: rgba(255, 255, 255, 0.8);
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.question h3, .question h4 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    color: var(--text-color);
-}
-
-.options {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.options label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 6px;
-    transition: background 0.2s ease;
-}
-
-.options label:hover {
-    background: rgba(199, 121, 102, 0.1);
-}
-
-.test-results {
-    margin-top: 3rem;
-    padding: 2rem;
-    background: #f9f9f9;
-    border-radius: var(--border-radius);
-    border-left: 4px solid var(--accent-color);
-}
-
-.disclaimer {
-    margin-top: 2rem;
-    padding: 1rem;
-    background: rgba(255, 229, 229, 0.3);
-    border-radius: 8px;
-    border-left: 3px solid #ff6b6b;
-}
-
-footer {
-    padding: 3rem 0;
-    font-size: 0.9375rem;
-    color: #5a5a5a;
-    text-align: center;
-    line-height: 1.7;
-}
 @media (max-width: 768px) {
   h1 {
     font-size: 2rem;
@@ -358,5 +482,134 @@ footer {
   
   .hero {
     padding: 60px 0;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .features-grid,
+  .tests-grid,
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+/* Дополнительные стили для навигации */
+.nav-spacer {
+  height: 70px; /* Высота навигации + отступ */
+}
+
+@media (max-width: 768px) {
+  .nav-spacer {
+    height: 100px; /* Больше места на мобильных */
+  }
+}
+
+/* Убираем inline-стили из компонентов */
+.custom-button {
+  display: inline-block;
+  padding: 0.875rem 1.75rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Центрирование текста */
+.text-center {
+  text-align: center !important;
+}
+
+.text-left {
+  text-align: left !important;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+/* Отступы */
+.mt-1 { margin-top: 0.5rem !important; }
+.mt-2 { margin-top: 1rem !important; }
+.mt-3 { margin-top: 1.5rem !important; }
+.mt-4 { margin-top: 2rem !important; }
+
+.mb-1 { margin-bottom: 0.5rem !important; }
+.mb-2 { margin-bottom: 1rem !important; }
+.mb-3 { margin-bottom: 1.5rem !important; }
+.mb-4 { margin-bottom: 2rem !important; }
+
+.ml-1 { margin-left: 0.5rem !important; }
+.ml-2 { margin-left: 1rem !important; }
+.ml-3 { margin-left: 1.5rem !important; }
+
+.mr-1 { margin-right: 0.5rem !important; }
+.mr-2 { margin-right: 1rem !important; }
+.mr-3 { margin-right: 1.5rem !important; }
+
+/* Ширина 100% */
+.w-100 {
+  width: 100% !important;
+}
+
+/* Демо-аккаунты */
+.demo-accounts {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #f5f5f5;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.demo-accounts p {
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+
+/* Формы входа/регистрации */
+.login-form,
+.register-form,
+.contact-form {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* FAQ стили */
+.faq h3 {
+  color: var(--accent-color);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.faq p {
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--light-accent);
+}
+
+/* Исправление наезда навигации */
+main {
+  padding-top: 20px; /* Добавляем отступ сверху для контента */
+}
+
+.hero {
+  padding-top: 100px; /* Уменьшаем отступ, так как навигация фиксированная */
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding-top: 80px;
   }
 }
