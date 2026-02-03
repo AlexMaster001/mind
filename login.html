@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход | Тихая поддержка</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <custom-navbar></custom-navbar>
@@ -69,87 +73,97 @@
     
     <script src="components/navbar.js"></script>
     <script src="components/footer.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <script>
-  // Инициализация Firebase (используем твой конфиг из Firebase Console)
-  const firebaseConfig = {
-    apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
-    authDomain: "minde-31a83.firebaseapp.com",
-    projectId: "minde-31a83",
-    storageBucket: "minde-31a83.appspot.com",
-    messagingSenderId: "1003108983817",
-    appId: "1:1003108983817:web:494ede688023c73667c4d8"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const remember = document.getElementById('remember').checked;
-
-    if (!email || !password) {
-      alert('Пожалуйста, заполните email и пароль');
-      return;
-    }
-
-    auth.signInWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        
-        // Сохраняем UID для последующих запросов
-        localStorage.setItem('uid', user.uid);
-        if (remember) {
-          localStorage.setItem('rememberMe', 'true');
+      document.addEventListener('DOMContentLoaded', () => {
+        // Проверка: загрузился ли Firebase?
+        if (typeof firebase === 'undefined') {
+          console.error('Firebase SDK не загружен!');
+          alert('Ошибка: Firebase не подключён. Обновите страницу.');
+          return;
         }
 
-        // Проверим, есть ли пользователь в Firestore (если нет — создадим)
-        return db.collection('users').doc(user.uid).get()
-          .then(doc => {
-            if (!doc.exists) {
-              // Создаём запись пользователя при первом входе
-              return db.collection('users').doc(user.uid).set({
-                email: email,
-                role: 'client',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                name: email.split('@')[0]
-              });
-            }
-          });
-      })
-      .then(() => {
-        alert('Вход выполнен успешно!');
-        window.location.href = '/profile.html';
-      })
-      .catch((error) => {
-        console.error("Ошибка входа:", error);
-        let msg = error.message;
-        if (msg.includes('invalid-email')) msg = 'Некорректный email';
-        if (msg.includes('wrong-password')) msg = 'Неверный пароль';
-        if (msg.includes('user-not-found')) msg = 'Пользователь не найден';
-        alert('Ошибка: ' + msg);
-      });
-  });
+        const firebaseConfig = {
+          apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
+          authDomain: "minde-31a83.firebaseapp.com",
+          projectId: "minde-31a83",
+          storageBucket: "minde-31a83.appspot.com",
+          messagingSenderId: "1003108983817",
+          appId: "1:1003108983817:web:494ede688023c73667c4d8"
+        };
 
-  // Автозаполнение для демо (оставляем как есть)
-  document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const demo = urlParams.get('demo');
-    
-    if (demo === 'user') {
-      document.getElementById('email').value = 'user@test.ru';
-      document.getElementById('password').value = '123456';
-    } else if (demo === 'admin') {
-      document.getElementById('email').value = 'admin@test.ru';
-      document.getElementById('password').value = '123456';
-    }
-  });
-</script>
+        try {
+          firebase.initializeApp(firebaseConfig);
+          const auth = firebase.auth();
+          const db = firebase.firestore();
+
+          document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+
+            if (!email || !password) {
+              alert('Пожалуйста, заполните email и пароль');
+              return;
+            }
+
+            auth.signInWithEmailAndPassword(email, password)
+              .then((userCredential) => {
+                const user = userCredential.user;
+                
+                // Сохраняем UID для последующих запросов
+                localStorage.setItem('uid', user.uid);
+                if (remember) {
+                  localStorage.setItem('rememberMe', 'true');
+                }
+
+                // Проверим, есть ли пользователь в Firestore (если нет — создадим)
+                return db.collection('users').doc(user.uid).get()
+                  .then(doc => {
+                    if (!doc.exists) {
+                      // Создаём запись пользователя при первом входе
+                      return db.collection('users').doc(user.uid).set({
+                        email: email,
+                        role: 'client',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        name: email.split('@')[0]
+                      });
+                    }
+                  });
+              })
+              .then(() => {
+                alert('Вход выполнен успешно!');
+                window.location.href = '/profile.html';
+              })
+              .catch((error) => {
+                console.error("Ошибка входа:", error);
+                let msg = error.message;
+                if (msg.includes('invalid-email')) msg = 'Некорректный email';
+                if (msg.includes('wrong-password')) msg = 'Неверный пароль';
+                if (msg.includes('user-not-found')) msg = 'Пользователь не найден';
+                alert('Ошибка: ' + msg);
+              });
+          });
+
+          // Автозаполнение для демо
+          const urlParams = new URLSearchParams(window.location.search);
+          const demo = urlParams.get('demo');
+          
+          if (demo === 'user') {
+            document.getElementById('email').value = 'user@test.ru';
+            document.getElementById('password').value = '123456';
+          } else if (demo === 'admin') {
+            document.getElementById('email').value = 'admin@test.ru';
+            document.getElementById('password').value = '123456';
+          }
+
+        } catch (err) {
+          console.error('Ошибка инициализации Firebase:', err);
+          alert('Не удалось подключиться к Firebase. Проверьте интернет и конфигурацию.');
+        }
+      });
+    </script>
 </body>
 </html>
