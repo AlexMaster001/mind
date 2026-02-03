@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Регистрация | Тихая поддержка</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <custom-navbar></custom-navbar>
@@ -79,69 +83,80 @@
     
     <script src="components/navbar.js"></script>
     <script src="components/footer.js"></script>
+
     <script>
-  // Инициализация Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
-    authDomain: "minde-31a83.firebaseapp.com",
-    projectId: "minde-31a83",
-    storageBucket: "minde-31a83.appspot.com",
-    messagingSenderId: "1003108983817",
-    appId: "1:1003108983817:web:494ede688023c73667c4d8"
-  };
+      document.addEventListener('DOMContentLoaded', () => {
+        // Проверка: загрузился ли Firebase?
+        if (typeof firebase === 'undefined') {
+          console.error('Firebase SDK не загружен!');
+          alert('Ошибка: Firebase не подключён. Обновите страницу.');
+          return;
+        }
 
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+        const firebaseConfig = {
+          apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
+          authDomain: "minde-31a83.firebaseapp.com",
+          projectId: "minde-31a83",
+          storageBucket: "minde-31a83.appspot.com",
+          messagingSenderId: "1003108983817",
+          appId: "1:1003108983817:web:494ede688023c73667c4d8"
+        };
 
-  document.getElementById('registerForm').addEventListener('submit', function(e) {
-    e.preventDefault();
+        try {
+          firebase.initializeApp(firebaseConfig);
+          const auth = firebase.auth();
+          const db = firebase.firestore();
 
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-    const phone = document.getElementById('phone').value;
-    const role = document.getElementById('role').value;
-    const agree = document.getElementById('agreeTerms').checked;
+          document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
 
-    if (!agree) {
-      alert('Пожалуйста, согласитесь с политикой конфиденциальности');
-      return;
-    }
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const phone = document.getElementById('phone').value;
+            const role = document.getElementById('role').value;
+            const agree = document.getElementById('agreeTerms').checked;
 
-    if (password !== confirmPassword) {
-      alert('Пароли не совпадают!');
-      return;
-    }
+            if (!agree) {
+              alert('Пожалуйста, согласитесь с политикой конфиденциальности');
+              return;
+            }
+            if (password !== confirmPassword) {
+              alert('Пароли не совпадают!');
+              return;
+            }
 
-    // Регистрация через Firebase Auth
-    auth.createUserWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
+            auth.createUserWithEmailAndPassword(email, password)
+              .then((userCredential) => {
+                const user = userCredential.user;
+                return db.collection('users').doc(user.uid).set({
+                  name: name,
+                  email: email,
+                  phone: phone || null,
+                  role: role,
+                  createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+              })
+              .then(() => {
+                localStorage.setItem('uid', auth.currentUser.uid);
+                alert('Регистрация успешна! Добро пожаловать.');
+                window.location.href = '/profile.html';
+              })
+              .catch((error) => {
+                console.error("Ошибка регистрации:", error);
+                let msg = error.message;
+                if (msg.includes('email-already-in-use')) msg = 'Этот email уже зарегистрирован';
+                if (msg.includes('weak-password')) msg = 'Пароль слишком слабый (мин. 6 символов)';
+                alert('Ошибка регистрации: ' + msg);
+              });
+          });
 
-        // Сохраняем данные в Firestore
-        return db.collection('users').doc(user.uid).set({
-          name: name,
-          email: email,
-          phone: phone || null,
-          role: role,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      })
-      .then(() => {
-        localStorage.setItem('uid', auth.currentUser.uid);
-        alert('Регистрация успешна! Добро пожаловать.');
-        window.location.href = '/profile.html';
-      })
-      .catch((error) => {
-        console.error("Ошибка регистрации:", error);
-        let msg = error.message;
-        if (msg.includes('email-already-in-use')) msg = 'Этот email уже зарегистрирован';
-        if (msg.includes('weak-password')) msg = 'Пароль слишком слабый (мин. 6 символов)';
-        alert('Ошибка регистрации: ' + msg);
+        } catch (err) {
+          console.error('Ошибка инициализации Firebase:', err);
+          alert('Не удалось подключиться к Firebase. Проверьте интернет и конфигурацию.');
+        }
       });
-  });
-</script>
+    </script>
 </body>
 </html>
