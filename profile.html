@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет | Тихая поддержка</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+      .profile-actions { text-align: center; margin-top: 2rem; }
+      .profile-actions .button {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        margin: 0 0.5rem 0.5rem 0;
+        border-radius: 8px;
+        text-decoration: none;
+      }
+      .outline {
+        background: transparent;
+        border: 2px solid #C77966;
+        color: #C77966;
+      }
+      .outline:hover {
+        background-color: rgba(199, 121, 102, 0.05);
+      }
+    </style>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -21,15 +39,18 @@
         </section>
 
         <section class="card" id="userInfo">
-            <p>Загрузка...</p>
+            <p>Проверка авторизации...</p>
         </section>
 
-        <div class="text-center mt-4">
-            <button onclick="logout()" class="button">Выйти</button>
+        <div class="profile-actions">
+            <a href="/tests/tests.html" class="button outline">Пройти тесты</a>
+            <a href="/parents.html" class="button outline">Для родителей</a>
         </div>
     </main>
 
     <custom-footer></custom-footer>
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
 
     <script>
       const firebaseConfig = {
@@ -40,50 +61,44 @@
         messagingSenderId: "1003108983817",
         appId: "1:1003108983817:web:494ede688023c73667c4d8"
       };
-
       firebase.initializeApp(firebaseConfig);
       const auth = firebase.auth();
       const db = firebase.firestore();
 
-      function logout() {
-        auth.signOut().then(() => {
-          localStorage.removeItem('uid');
-          alert('Вы вышли из аккаунта');
-          window.location.href = '/';
-        });
-      }
-
-      document.addEventListener('DOMContentLoaded', () => {
-        const uid = localStorage.getItem('uid');
-        if (!uid) {
-          alert('Сессия истекла. Пожалуйста, войдите снова.');
-          window.location.href = '/login.html';
+      auth.onAuthStateChanged(async (user) => {
+        const userInfoDiv = document.getElementById('userInfo');
+        if (!user) {
+          userInfoDiv.innerHTML = '<p>Вы не авторизованы. Перенаправление...</p>';
+          setTimeout(() => {
+            window.location.href = '/login.html';
+          }, 2000);
           return;
         }
 
-        db.collection('users').doc(uid).get()
-          .then(doc => {
-            if (!doc.exists) {
-              document.getElementById('userInfo').innerHTML = '<p>Пользователь не найден.</p>';
-              return;
-            }
-
-            const data = doc.data();
-            document.getElementById('userInfo').innerHTML = `
-              <h3>Профиль</h3>
-              <p><strong>Имя:</strong> ${data.name || 'Не указано'}</p>
-              <p><strong>Email:</strong> ${data.email}</p>
-              <p><strong>Роль:</strong> ${data.role || 'client'}</p>
-              <p><strong>Дата регистрации:</strong> ${data.createdAt?.toDate?.().toLocaleDateString() || '—'}</p>
-              <p><strong>Телефон:</strong> ${data.phone || 'Не указан'}</p>
-              <hr>
-              <p><em>Данные хранятся в облачной базе Firebase. Вы можете удалить аккаунт в любое время.</em></p>
-            `;
-          })
-          .catch(err => {
-            console.error("Ошибка загрузки профиля:", err);
-            document.getElementById('userInfo').innerHTML = `<p>Ошибка загрузки: ${err.message}</p>`;
-          });
+        try {
+          const doc = await db.collection('users').doc(user.uid).get();
+          if (!doc.exists) {
+            await db.collection('users').doc(user.uid).set({
+              email: user.email,
+              name: user.email.split('@')[0],
+              role: 'client',
+              createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          }
+          const data = doc.exists ? doc.data() : {
+            name: user.email.split('@')[0],
+            email: user.email,
+            role: 'client'
+          };
+          userInfoDiv.innerHTML = `
+            <h3>Профиль</h3>
+            <p><strong>Имя:</strong> ${data.name}</p>
+            <p><strong>Email:</strong> ${data.email}</p>
+            <p><strong>Роль:</strong> ${data.role}</p>
+          `;
+        } catch (err) {
+          userInfoDiv.innerHTML = `<p>Ошибка: ${err.message}</p>`;
+        }
       });
     </script>
 </body>

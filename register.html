@@ -12,7 +12,6 @@
 </head>
 <body>
     <custom-navbar></custom-navbar>
-    
     <div class="nav-spacer"></div>
 
     <main class="container">
@@ -22,140 +21,75 @@
         </section>
 
         <section class="card">
-            <div class="author-signature">
-                <p>Регистрация позволит вам сохранять историю тестов и получать персональные рекомендации</p>
-            </div>
-
             <form id="registerForm" class="register-form">
                 <div class="form-group">
-                    <label for="name">Имя и фамилия *</label>
-                    <input type="text" id="name" name="name" required placeholder="Алексей Кирсанов">
+                    <label for="name">Имя *</label>
+                    <input type="text" id="name" required>
                 </div>
-                
-                <div class="form-group">
+                <div class "form-group">
                     <label for="email">Email *</label>
-                    <input type="email" id="email" name="email" required placeholder="example@mail.ru">
+                    <input type="email" id="email" required>
                 </div>
-                
                 <div class="form-group">
                     <label for="password">Пароль *</label>
-                    <input type="password" id="password" name="password" required minlength="6" placeholder="Не менее 6 символов">
+                    <input type="password" id="password" required minlength="6">
                 </div>
-                
-                <div class="form-group">
-                    <label for="confirmPassword">Подтвердите пароль *</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="phone">Телефон (необязательно)</label>
-                    <input type="tel" id="phone" name="phone" placeholder="+7 (999) 123-45-67">
-                </div>
-                
-                <div class="form-group">
-                    <label for="role">Я регистрируюсь как:</label>
-                    <select id="role" name="role">
-                        <option value="user">Пользователь (прохожу тесты)</option>
-                        <option value="parent">Родитель (ищу материалы)</option>
-                        <option value="admin">Администратор (только по приглашению)</option>
-                    </select>
-                </div>
-                
                 <div class="form-group">
                     <label class="checkbox-label">
-                        <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
-                        Я согласен с <a href="/privacy.html">политикой конфиденциальности</a> и даю согласие на обработку персональных данных
+                        <input type="checkbox" required>
+                        Согласен с политикой конфиденциальности
                     </label>
                 </div>
-                
-                <button type="submit" class="button w-100">
-                    Зарегистрироваться
-                </button>
-                
-                <p class="text-center mt-3">
-                    Уже есть аккаунт? <a href="/login.html">Войти</a>
-                </p>
+                <button type="submit" class="button w-100">Зарегистрироваться</button>
+                <p class="text-center mt-3">Уже есть аккаунт? <a href="/login.html">Войти</a></p>
             </form>
         </section>
     </main>
 
     <custom-footer></custom-footer>
-    
     <script src="components/navbar.js"></script>
     <script src="components/footer.js"></script>
 
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        // Проверка: загрузился ли Firebase?
-        if (typeof firebase === 'undefined') {
-          console.error('Firebase SDK не загружен!');
-          alert('Ошибка: Firebase не подключён. Обновите страницу.');
-          return;
-        }
+      const firebaseConfig = {
+        apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
+        authDomain: "minde-31a83.firebaseapp.com",
+        projectId: "minde-31a83",
+        storageBucket: "minde-31a83.appspot.com",
+        messagingSenderId: "1003108983817",
+        appId: "1:1003108983817:web:494ede688023c73667c4d8"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const db = firebase.firestore();
 
-        const firebaseConfig = {
-          apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
-          authDomain: "minde-31a83.firebaseapp.com",
-          projectId: "minde-31a83",
-          storageBucket: "minde-31a83.appspot.com",
-          messagingSenderId: "1003108983817",
-          appId: "1:1003108983817:web:494ede688023c73667c4d8"
-        };
+      document.getElementById('registerForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
 
-        try {
-          firebase.initializeApp(firebaseConfig);
-          const auth = firebase.auth();
-          const db = firebase.firestore();
-
-          document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const phone = document.getElementById('phone').value;
-            const role = document.getElementById('role').value;
-            const agree = document.getElementById('agreeTerms').checked;
-
-            if (!agree) {
-              alert('Пожалуйста, согласитесь с политикой конфиденциальности');
-              return;
-            }
-            if (password !== confirmPassword) {
-              alert('Пароли не совпадают!');
-              return;
-            }
-
-            auth.createUserWithEmailAndPassword(email, password)
-              .then((userCredential) => {
-                const user = userCredential.user;
-                return db.collection('users').doc(user.uid).set({
-                  name: name,
-                  email: email,
-                  phone: phone || null,
-                  role: role,
-                  createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-              })
-              .then(() => {
-                localStorage.setItem('uid', auth.currentUser.uid);
-                alert('Регистрация успешна! Добро пожаловать.');
-                window.location.href = '/profile.html';
-              })
-              .catch((error) => {
-                console.error("Ошибка регистрации:", error);
-                let msg = error.message;
-                if (msg.includes('email-already-in-use')) msg = 'Этот email уже зарегистрирован';
-                if (msg.includes('weak-password')) msg = 'Пароль слишком слабый (мин. 6 символов)';
-                alert('Ошибка регистрации: ' + msg);
-              });
+        auth.createUserWithEmailAndPassword(email, password)
+          .then(userCredential => {
+            return db.collection('users').doc(userCredential.user.uid).set({
+              name: name,
+              email: email,
+              role: 'client',
+              createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          })
+          .then(() => {
+            alert('Регистрация успешна!');
+            setTimeout(() => {
+              window.location.href = '/profile.html';
+            }, 500);
+          })
+          .catch(err => {
+            let msg = err.message;
+            if (msg.includes('email-already-in-use')) msg = 'Email уже зарегистрирован';
+            if (msg.includes('weak-password')) msg = 'Пароль слишком слабый';
+            alert('Ошибка: ' + msg);
           });
-
-        } catch (err) {
-          console.error('Ошибка инициализации Firebase:', err);
-          alert('Не удалось подключиться к Firebase. Проверьте интернет и конфигурацию.');
-        }
       });
     </script>
 </body>

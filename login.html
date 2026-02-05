@@ -12,7 +12,6 @@
 </head>
 <body>
     <custom-navbar></custom-navbar>
-    
     <div class="nav-spacer"></div>
 
     <main class="container">
@@ -25,144 +24,68 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required placeholder="example@mail.ru">
+                    <input type="email" id="email" required placeholder="example@mail.ru">
                 </div>
-                
                 <div class="form-group">
                     <label for="password">Пароль</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" required minlength="6">
                 </div>
-                
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="remember" name="remember">
-                        Запомнить меня
-                    </label>
-                </div>
-                
-                <button type="submit" class="button w-100">
-                    Войти
-                </button>
-                
-                <div class="text-center mt-3">
-                    <p class="mb-2">
-                        Нет аккаунта? <a href="/register.html">Зарегистрироваться</a>
-                    </p>
-                    <p>
-                        <a href="/forgot-password.html">Забыли пароль?</a>
-                    </p>
-                </div>
-                
-                <!-- Демо-аккаунты для тестирования -->
-                <div class="demo-accounts">
-                    <p class="mb-1">
-                        <strong>Демо-аккаунты для тестирования:</strong>
-                    </p>
-                    <p class="mb-1">
-                        Пользователь: user@test.ru / пароль: 123456
-                    </p>
-                    <p>
-                        Администратор: admin@test.ru / пароль: 123456
-                    </p>
-                </div>
+                <button type="submit" class="button w-100">Войти</button>
+                <p class="text-center mt-3">
+                    Нет аккаунта? <a href="/register.html">Зарегистрироваться</a>
+                </p>
             </form>
         </section>
     </main>
 
     <custom-footer></custom-footer>
-    
     <script src="components/navbar.js"></script>
     <script src="components/footer.js"></script>
 
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        // Проверка: загрузился ли Firebase?
-        if (typeof firebase === 'undefined') {
-          console.error('Firebase SDK не загружен!');
-          alert('Ошибка: Firebase не подключён. Обновите страницу.');
-          return;
-        }
+      const firebaseConfig = {
+        apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
+        authDomain: "minde-31a83.firebaseapp.com",
+        projectId: "minde-31a83",
+        storageBucket: "minde-31a83.appspot.com",
+        messagingSenderId: "1003108983817",
+        appId: "1:1003108983817:web:494ede688023c73667c4d8"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const db = firebase.firestore();
 
-        const firebaseConfig = {
-          apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
-          authDomain: "minde-31a83.firebaseapp.com",
-          projectId: "minde-31a83",
-          storageBucket: "minde-31a83.appspot.com",
-          messagingSenderId: "1003108983817",
-          appId: "1:1003108983817:web:494ede688023c73667c4d8"
-        };
+      document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
 
-        try {
-          firebase.initializeApp(firebaseConfig);
-          const auth = firebase.auth();
-          const db = firebase.firestore();
-
-          document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const remember = document.getElementById('remember').checked;
-
-            if (!email || !password) {
-              alert('Пожалуйста, заполните email и пароль');
-              return;
-            }
-
-            auth.signInWithEmailAndPassword(email, password)
-              .then((userCredential) => {
-                const user = userCredential.user;
-                
-                // Сохраняем UID для последующих запросов
-                localStorage.setItem('uid', user.uid);
-                if (remember) {
-                  localStorage.setItem('rememberMe', 'true');
-                }
-
-                // Проверим, есть ли пользователь в Firestore (если нет — создадим)
-                return db.collection('users').doc(user.uid).get()
-                  .then(doc => {
-                    if (!doc.exists) {
-                      // Создаём запись пользователя при первом входе
-                      return db.collection('users').doc(user.uid).set({
-                        email: email,
-                        role: 'client',
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        name: email.split('@')[0]
-                      });
-                    }
-                  });
-              })
-              .then(() => {
-                alert('Вход выполнен успешно!');
-                window.location.href = '/profile.html';
-              })
-              .catch((error) => {
-                console.error("Ошибка входа:", error);
-                let msg = error.message;
-                if (msg.includes('invalid-email')) msg = 'Некорректный email';
-                if (msg.includes('wrong-password')) msg = 'Неверный пароль';
-                if (msg.includes('user-not-found')) msg = 'Пользователь не найден';
-                alert('Ошибка: ' + msg);
-              });
+        auth.signInWithEmailAndPassword(email, password)
+          .then(userCredential => {
+            const user = userCredential.user;
+            return db.collection('users').doc(user.uid).get().then(doc => {
+              if (!doc.exists) {
+                return db.collection('users').doc(user.uid).set({
+                  email: email,
+                  name: email.split('@')[0],
+                  role: 'client',
+                  createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+              }
+            });
+          })
+          .then(() => {
+            alert('Вход выполнен успешно!');
+            setTimeout(() => {
+              window.location.href = '/profile.html';
+            }, 500);
+          })
+          .catch(err => {
+            let msg = err.message;
+            if (msg.includes('invalid-email')) msg = 'Неверный email';
+            if (msg.includes('wrong-password')) msg = 'Неверный пароль';
+            alert('Ошибка: ' + msg);
           });
-
-          // Автозаполнение для демо
-          const urlParams = new URLSearchParams(window.location.search);
-          const demo = urlParams.get('demo');
-          
-          if (demo === 'user') {
-            document.getElementById('email').value = 'user@test.ru';
-            document.getElementById('password').value = '123456';
-          } else if (demo === 'admin') {
-            document.getElementById('email').value = 'admin@test.ru';
-            document.getElementById('password').value = '123456';
-          }
-
-        } catch (err) {
-          console.error('Ошибка инициализации Firebase:', err);
-          alert('Не удалось подключиться к Firebase. Проверьте интернет и конфигурацию.');
-        }
       });
     </script>
 </body>
