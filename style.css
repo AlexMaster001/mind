@@ -613,3 +613,18 @@ main {
     padding-top: 80px;
   }
 }
+
+.about-photo {
+  text-align: center;
+}
+
+.profile-photo {
+  width: 300px;
+  height: auto; /* автоматическая высота */
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+  margin: 0 auto;
+  display: block;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}

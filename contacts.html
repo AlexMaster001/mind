@@ -21,66 +21,32 @@
         <div class="features-grid">
             <div class="card">
                 <h3>📞 Для записи на консультацию</h3>
-                <p><strong>Телефон:</strong> +7 (999) 123-45-67</p>
-                <p><strong>Telegram:</strong> @quiet_support</p>
-                <p><strong>Время для звонков:</strong> Пн-Пт, 10:00-19:00</p>
+                <p><strong>Телефон:</strong> <a href="tel:+79168863131">+7 (916) 886-31-31</a></p>
+                <p><strong>Telegram:</strong> <a href="https://t.me/DomVMozgu" target="_blank">@DomVMozgu</a></p>
+                <p><strong>Время для звонков:</strong> Пн–Пт, 10:00–19:00</p>
             </div>
             
             <div class="card">
                 <h3>📧 Электронная почта</h3>
-                <p><strong>Для консультаций:</strong> a.kirsanov@quiet-support.ru</p>
-                <p><strong>Для сотрудничества:</strong> partner@quiet-support.ru</p>
-                <p><strong>Техническая поддержка:</strong> support@quiet-support.ru</p>
+                <p><strong>Для консультаций:</strong> <a href="mailto:alexbalderlab@gmail.com">alexbalderlab@gmail.com</a></p>
+                <p><strong>Для сотрудничества:</strong> <a href="mailto:partner@quiet-support.ru">partner@quiet-support.ru</a></p>
+                <p><strong>Техническая поддержка:</strong> <a href="mailto:support@quiet-support.ru">support@quiet-support.ru</a></p>
             </div>
             
             <div class="card">
                 <h3>📍 Очный приём</h3>
-                <p><strong>Адрес:</strong> Москва, Лубянский проезд, 15</p>
-                <p><strong>Метро:</strong> Китай-город, Лубянка</p>
+                <p><strong>Адрес:</strong> Москва, Селигерская</p>
+                <p><strong>Метро:</strong> Селигерская, Верхние Лихоборы</p>
                 <p><strong>Формат:</strong> Индивидуально и онлайн</p>
             </div>
         </div>
 
         <section class="card mt-4">
-            <h2>Написать сообщение</h2>
-            
-            <form id="contactForm" class="contact-form">
-                <div class="form-group">
-                    <label for="contactName">Ваше имя *</label>
-                    <input type="text" id="contactName" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="contactEmail">Email для ответа *</label>
-                    <input type="email" id="contactEmail" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="contactType">Тема обращения *</label>
-                    <select id="contactType" required>
-                        <option value="">Выберите тему</option>
-                        <option value="consultation">Запись на консультацию</option>
-                        <option value="question">Вопрос психологу</option>
-                        <option value="cooperation">Сотрудничество</option>
-                        <option value="technical">Техническая проблема с сайтом</option>
-                        <option value="other">Другое</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="contactMessage">Сообщение *</label>
-                    <textarea id="contactMessage" rows="5" required></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" required>
-                        Я согласен на обработку персональных данных
-                    </label>
-                </div>
-                
-                <button type="submit" class="button w-100">Отправить сообщение</button>
-            </form>
+            <h2>Как со мной связаться</h2>
+            <p>Выберите удобный способ — я отвечаю на все сообщения в течение 24 часов.</p>
+            <p class="ethics-note" style="margin-top: 1rem; font-size: 0.95rem;">
+                Если вы не получили ответ — проверьте папку «Спам» или напишите повторно.
+            </p>
         </section>
         
         <section class="card mt-4">
@@ -88,16 +54,16 @@
             
             <div class="faq">
                 <h3>Сколько длится консультация?</h3>
-                <p>Первая консультация - 90 минут, последующие - 60 минут.</p>
+                <p>Первая консультация — 15 минут, последующие — 50 минут.</p>
                 
                 <h3>Работаете ли вы онлайн?</h3>
-                <p>Да, провожу консультации через Zoom, Skype или Telegram.</p>
+                <p>Да, провожу консультации через Zoom, Skype или Яндекс Телемост.</p>
                 
                 <h3>Как подготовиться к первой встрече?</h3>
                 <p>Достаточно просто прийти. Можно заранее подумать, что бы вы хотели обсудить, но это не обязательно.</p>
                 
                 <h3>Вы работаете с подростками без присутствия родителей?</h3>
-                <p>С подростками от 16 лет - да. С 14 до 16 - требуется письменное согласие родителей.</p>
+                <p>С подростками от 16 лет — да. С 14 до 16 — требуется письменное согласие родителей.</p>
             </div>
         </section>
     </main>
@@ -106,12 +72,5 @@
     
     <script src="components/navbar.js"></script>
     <script src="components/footer.js"></script>
-    <script>
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Спасибо за ваше сообщение! Я отвечу вам в течение 24 часов.');
-            this.reset();
-        });
-    </script>
 </body>
 </html>
