@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тест на детско-родительские отношения | Тихая поддержка</title>
     <link rel="stylesheet" href="../style.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <custom-navbar></custom-navbar>
@@ -184,80 +188,95 @@
     <script src="../components/navbar.js"></script>
     <script src="../components/footer.js"></script>
     <script>
-        document.getElementById('parentingTestForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            let fatherWarmth = 0;
-            let fatherCriticism = 0;
-            let motherWarmth = 0;
-            let motherCriticism = 0;
-            
-            // Calculate father warmth (questions 1-4)
-            for (let i = 1; i <= 4; i++) {
-                const selected = document.querySelector(`input[name="father_q${i}"]:checked`);
-                if (selected) fatherWarmth += parseInt(selected.value);
-            }
-            
-            // Calculate father criticism (questions 5-6)
-            for (let i = 5; i <= 6; i++) {
-                const selected = document.querySelector(`input[name="father_q${i}"]:checked`);
-                if (selected) fatherCriticism += parseInt(selected.value);
-            }
-            
-            // Calculate mother warmth (questions 1-4)
-            for (let i = 1; i <= 4; i++) {
-                const selected = document.querySelector(`input[name="mother_q${i}"]:checked`);
-                if (selected) motherWarmth += parseInt(selected.value);
-            }
-            
-            // Calculate mother criticism (questions 5-6)
-            for (let i = 5; i <= 6; i++) {
-                const selected = document.querySelector(`input[name="mother_q${i}"]:checked`);
-                if (selected) motherCriticism += parseInt(selected.value);
-            }
+      // Инициализация Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
+        authDomain: "minde-31a83.firebaseapp.com",
+        projectId: "minde-31a83",
+        storageBucket: "minde-31a83.appspot.com",
+        messagingSenderId: "1003108983817",
+        appId: "1:1003108983817:web:494ede688023c73667c4d8"
+      };
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
 
-            const fatherWarmthLevel = fatherWarmth >= 16 ? 'высокий' : fatherWarmth >= 12 ? 'средний' : 'низкий';
-            const fatherCriticismLevel = fatherCriticism >= 9 ? 'высокий' : fatherCriticism >= 6 ? 'средний' : 'низкий';
-            const motherWarmthLevel = motherWarmth >= 16 ? 'высокий' : motherWarmth >= 12 ? 'средний' : 'низкий';
-            const motherCriticismLevel = motherCriticism >= 9 ? 'высокий' : motherCriticism >= 6 ? 'средний' : 'низкий';
+      document.getElementById('parentingTestForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        let fatherWarmth = 0;
+        let fatherCriticism = 0;
+        let motherWarmth = 0;
+        let motherCriticism = 0;
+        
+        for (let i = 1; i <= 4; i++) {
+          const selected = document.querySelector(`input[name="father_q${i}"]:checked`);
+          if (selected) fatherWarmth += parseInt(selected.value);
+        }
+        for (let i = 5; i <= 6; i++) {
+          const selected = document.querySelector(`input[name="father_q${i}"]:checked`);
+          if (selected) fatherCriticism += parseInt(selected.value);
+        }
+        for (let i = 1; i <= 4; i++) {
+          const selected = document.querySelector(`input[name="mother_q${i}"]:checked`);
+          if (selected) motherWarmth += parseInt(selected.value);
+        }
+        for (let i = 5; i <= 6; i++) {
+          const selected = document.querySelector(`input[name="mother_q${i}"]:checked`);
+          if (selected) motherCriticism += parseInt(selected.value);
+        }
 
-            let resultText = `<h3>Ваш отец:</h3>
-            <p><strong>Уровень эмоциональной теплоты:</strong> ${fatherWarmthLevel} (${fatherWarmth}/20 баллов)</p>
-            <p><strong>Уровень критики:</strong> ${fatherCriticismLevel} (${fatherCriticism}/10 баллов)</p>
-            
-            <h3>Ваша мать:</h3>
-            <p><strong>Уровень эмоциональной теплоты:</strong> ${motherWarmthLevel} (${motherWarmth}/20 баллов)</p>
-            <p><strong>Уровень критики:</strong> ${motherCriticismLevel} (${motherCriticism}/10 баллов)</p>
-            
-            <h3>Интерпретация:</h3>
-            <p>Этот опросник помогает увидеть, какие паттерны заботы вы получали в детстве. Он не даёт «диагноза» и не сравнивает вас с «идеальным».</p>
-            <p>Ваш опыт — реален, даже если он не совпадает с нормой. EMBU отражает ваше восприятие, а не объективную картину. Это инструмент для рефлексии, а не для обвинения родителей.</p>`;
+        const fatherWarmthLevel = fatherWarmth >= 16 ? 'высокий' : fatherWarmth >= 12 ? 'средний' : 'низкий';
+        const fatherCriticismLevel = fatherCriticism >= 9 ? 'высокий' : fatherCriticism >= 6 ? 'средний' : 'низкий';
+        const motherWarmthLevel = motherWarmth >= 16 ? 'высокий' : motherWarmth >= 12 ? 'средний' : 'низкий';
+        const motherCriticismLevel = motherCriticism >= 9 ? 'высокий' : motherCriticism >= 6 ? 'средний' : 'низкий';
 
-            // Сохраняем результат, если пользователь авторизован
-            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-            if (isLoggedIn) {
-                const testResult = {
-                    testName: 'Тест на детско-родительские отношения (EMBU-S)',
-                    date: new Date().toISOString().split('T')[0],
-                    score: {
-                        fatherWarmth: fatherWarmth,
-                        fatherCriticism: fatherCriticism,
-                        motherWarmth: motherWarmth,
-                        motherCriticism: motherCriticism
-                    },
-                    interpretation: `Отец: теплота ${fatherWarmthLevel}, критика ${fatherCriticismLevel}. Мать: теплота ${motherWarmthLevel}, критика ${motherCriticismLevel}`
-                };
-                
-                // Сохраняем в историю
-                const history = JSON.parse(localStorage.getItem('testHistory') || '[]');
-                history.push(testResult);
-                localStorage.setItem('testHistory', JSON.stringify(history));
-            }
+        let resultText = `<h3>Ваш отец:</h3>
+        <p><strong>Уровень эмоциональной теплоты:</strong> ${fatherWarmthLevel} (${fatherWarmth}/20 баллов)</p>
+        <p><strong>Уровень критики:</strong> ${fatherCriticismLevel} (${fatherCriticism}/10 баллов)</p>
+        
+        <h3>Ваша мать:</h3>
+        <p><strong>Уровень эмоциональной теплоты:</strong> ${motherWarmthLevel} (${motherWarmth}/20 баллов)</p>
+        <p><strong>Уровень критики:</strong> ${motherCriticismLevel} (${motherCriticism}/10 баллов)</p>
+        
+        <h3>Интерпретация:</h3>
+        <p>Этот опросник помогает увидеть, какие паттерны заботы вы получали в детстве. Он не даёт «диагноза» и не сравнивает вас с «идеальным».</p>
+        <p>Ваш опыт — реален, даже если он не совпадает с нормой. EMBU отражает ваше восприятие, а не объективную картину. Это инструмент для рефлексии, а не для обвинения родителей.</p>`;
 
-            document.getElementById('resultText').innerHTML = resultText;
-            document.getElementById('testResults').style.display = 'block';
-            window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
-        });
+        // === СОХРАНЕНИЕ РЕЗУЛЬТАТА ===
+        const user = firebase.auth().currentUser;
+        const resultData = {
+          testName: 'Тест на детско-родительские отношения (EMBU-S)',
+          date: new Date().toISOString(),
+          score: {
+            fatherWarmth: fatherWarmth,
+            fatherCriticism: fatherCriticism,
+            motherWarmth: motherWarmth,
+            motherCriticism: motherCriticism
+          },
+          interpretation: `Отец: теплота ${fatherWarmthLevel}, критика ${fatherCriticismLevel}. Мать: теплота ${motherWarmthLevel}, критика ${motherCriticismLevel}`
+        };
+
+        if (user) {
+          // Сохраняем в Firestore
+          firebase.firestore()
+            .collection('users')
+            .doc(user.uid)
+            .collection('testResults')
+            .add(resultData)
+            .then(() => console.log('Результат EMBU сохранён в Firestore'))
+            .catch(err => console.error('Ошибка Firestore:', err));
+        } else {
+          // Сохраняем в localStorage
+          const history = JSON.parse(localStorage.getItem('testHistory') || '[]');
+          history.push(resultData);
+          localStorage.setItem('testHistory', JSON.stringify(history));
+        }
+
+        document.getElementById('resultText').innerHTML = resultText;
+        document.getElementById('testResults').style.display = 'block';
+        window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
+      });
     </script>
 </body>
 </html>

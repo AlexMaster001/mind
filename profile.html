@@ -22,6 +22,7 @@
       .outline:hover {
         background-color: rgba(199, 121, 102, 0.05);
       }
+      #testHistory { margin-top: 2rem; }
     </style>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -39,12 +40,17 @@
         </section>
 
         <section class="card" id="userInfo">
-            <p>Проверка авторизации...</p>
+            <p>Загрузка...</p>
         </section>
 
         <div class="profile-actions">
             <a href="/tests/tests.html" class="button outline">Пройти тесты</a>
             <a href="/parents.html" class="button outline">Для родителей</a>
+        </div>
+
+        <!-- История тестов -->
+        <div id="testHistory">
+            <h3>Загрузка истории...</h3>
         </div>
     </main>
 
@@ -61,35 +67,30 @@
         messagingSenderId: "1003108983817",
         appId: "1:1003108983817:web:494ede688023c73667c4d8"
       };
-      firebase.initializeApp(firebaseConfig);
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+
       const auth = firebase.auth();
       const db = firebase.firestore();
 
       auth.onAuthStateChanged(async (user) => {
         const userInfoDiv = document.getElementById('userInfo');
+        const historyDiv = document.getElementById('testHistory');
+
         if (!user) {
-          userInfoDiv.innerHTML = '<p>Вы не авторизованы. Перенаправление...</p>';
+          userInfoDiv.innerHTML = '<p>Вы не авторизованы.</p>';
+          historyDiv.innerHTML = '';
           setTimeout(() => {
             window.location.href = '/login.html';
           }, 2000);
           return;
         }
 
+        // Загружаем профиль
         try {
           const doc = await db.collection('users').doc(user.uid).get();
-          if (!doc.exists) {
-            await db.collection('users').doc(user.uid).set({
-              email: user.email,
-              name: user.email.split('@')[0],
-              role: 'client',
-              createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-          }
-          const data = doc.exists ? doc.data() : {
-            name: user.email.split('@')[0],
-            email: user.email,
-            role: 'client'
-          };
+          const data = doc.exists ? doc.data() : { name: '—', email: user.email, role: 'client' };
           userInfoDiv.innerHTML = `
             <h3>Профиль</h3>
             <p><strong>Имя:</strong> ${data.name}</p>
@@ -97,7 +98,36 @@
             <p><strong>Роль:</strong> ${data.role}</p>
           `;
         } catch (err) {
-          userInfoDiv.innerHTML = `<p>Ошибка: ${err.message}</p>`;
+          userInfoDiv.innerHTML = `<p>Ошибка загрузки профиля: ${err.message}</p>`;
+        }
+
+        // Загружаем историю тестов
+        try {
+          const snapshot = await db
+            .collection('users')
+            .doc(user.uid)
+            .collection('testResults')
+            .orderBy('date', 'desc')
+            .get();
+
+          if (snapshot.empty) {
+            historyDiv.innerHTML = '<h3>История тестов</h3><p>Вы ещё не проходили тесты.</p>';
+            return;
+          }
+
+          let html = '<h3>История тестов</h3><ul>';
+          snapshot.forEach(doc => {
+            const d = doc.data();
+            const date = new Date(d.date).toLocaleDateString('ru-RU');
+            html += `<li>
+              <strong>${d.testName}</strong> — ${d.score}/${d.maxScore} (${d.interpretation}) от ${date}
+              <a href="/tests/tests.html" class="button outline ml-2" style="font-size:0.8rem;padding:0.3rem 0.6rem;">Перепройти</a>
+            </li>`;
+          });
+          html += '</ul>';
+          historyDiv.innerHTML = html;
+        } catch (err) {
+          historyDiv.innerHTML = `<p>Ошибка загрузки истории: ${err.message}</p>`;
         }
       });
     </script>
