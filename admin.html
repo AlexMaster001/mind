@@ -30,175 +30,198 @@
     <custom-footer></custom-footer>
     <script src="components/navbar.js"></script>
     <script src="components/footer.js"></script>
-    <script>
-      // Инициализация Firebase
-      const firebaseConfig = {
-        apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
-        authDomain: "minde-31a83.firebaseapp.com",
-        projectId: "minde-31a83",
-        storageBucket: "minde-31a83.appspot.com",
-        messagingSenderId: "1003108983817",
-        appId: "1:1003108983817:web:494ede688023c73667c4d8"
-      };
+<script>
+  // Инициализация Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
+    authDomain: "minde-31a83.firebaseapp.com",
+    projectId: "minde-31a83",
+    storageBucket: "minde-31a83.appspot.com",
+    messagingSenderId: "1003108983817",
+    appId: "1:1003108983817:web:494ede688023c73667c4d8"
+  };
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
 
-      if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  auth.onAuthStateChanged(async (user) => {
+    const adminContent = document.getElementById('adminContent');
+
+    if (!user) {
+      adminContent.innerHTML = `
+        <div class="card text-center" style="padding: 3rem;">
+          <h3>Войдите как администратор</h3>
+          <a href="/login.html" class="button">Вход</a>
+        </div>
+      `;
+      return;
+    }
+
+    try {
+      const userDoc = await db.collection('users').doc(user.uid).get();
+      if (!userDoc.exists || userDoc.data().role !== 'admin') {
+        adminContent.innerHTML = `
+          <div class="card text-center" style="padding: 3rem;">
+            <h3>Доступ запрещён</h3>
+            <p>Только для администраторов</p>
+            <a href="/" class="button">На главную</a>
+          </div>
+        `;
+        return;
       }
 
-      const auth = firebase.auth();
-      const db = firebase.firestore();
+      // Загружаем пользователей с детьми
+      const usersSnapshot = await db.collection('users').get();
+      const users = [];
+      usersSnapshot.forEach(doc => {
+        const data = doc.data();
+        if (data.children && data.children.length > 0) {
+          users.push({ ...data, uid: doc.id });
+        }
+      });
 
-      // Ждём, пока Firebase восстановит сессию
-      auth.onAuthStateChanged(async (user) => {
-        const adminContent = document.getElementById('adminContent');
+      if (users.length === 0) {
+        adminContent.innerHTML = `
+          <div class="card text-center" style="padding: 3rem;">
+            <h3>Нет родителей с детьми</h3>
+          </div>
+        `;
+        return;
+      }
 
-        if (!user) {
-          adminContent.innerHTML = `
-            <div class="card text-center" style="padding: 3rem;">
-              <h3>Войдите как администратор</h3>
-              <a href="/login.html" class="button">Вход</a>
-            </div>
-          `;
+      // Рендерим таблицу
+      let tableHtml = `
+        <div class="card">
+          <h3>👥 Родители с детьми (${users.length})</h3>
+          <table class="w-100">
+            <thead>
+              <tr style="background:#f5f5f5;">
+                <th>Имя</th>
+                <th>Email</th>
+                <th>Дети</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+        </div>
+      `;
+      adminContent.innerHTML = tableHtml;
+
+      const tbody = document.getElementById('usersTableBody');
+      users.forEach((u, index) => {
+        const childrenList = u.children.map(c => `${c.childName} (${c.age} лет)`).join(', ');
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${u.name}</td>
+          <td>${u.email}</td>
+          <td>${childrenList}</td>
+          <td>
+            <button class="button outline observation-btn" data-uid="${u.uid}" data-name="${u.name}" data-children='${JSON.stringify(u.children)}'>
+              Отправить наблюдение
+            </button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // Добавляем обработчики кнопок после рендеринга
+      document.querySelectorAll('.observation-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const uid = this.getAttribute('data-uid');
+          const name = this.getAttribute('data-name');
+          const childrenJson = this.getAttribute('data-children');
+          showObservationModal(uid, name, childrenJson);
+        });
+      });
+
+      // Модальное окно (вставляем один раз)
+      const modalHTML = `
+        <div id="observationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+          <div style="background:white; margin:50px auto; padding:2rem; max-width:600px; border-radius:12px;">
+            <h3>Новое наблюдение для <span id="modalParentName"></span></h3>
+            <form id="observationForm">
+              <div class="form-group">
+                <label>Ребёнок</label>
+                <select id="observationChild" required>
+                  <option value="">Выберите ребёнка</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Текст наблюдения *</label>
+                <textarea id="observationText" rows="6" required placeholder="Опишите поведение, реакции, рекомендации..."></textarea>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="button">Отправить</button>
+                <button type="button" class="secondary-button ml-2" onclick="closeObservationModal()">Отмена</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+      // Обработчик формы
+      document.getElementById('observationForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const parentId = document.getElementById('observationForm').dataset.parentId;
+        const childId = document.getElementById('observationChild').value;
+        const childName = document.querySelector(`#observationChild option[value="${childId}"]`).textContent;
+        const text = document.getElementById('observationText').value.trim();
+
+        if (!text) {
+          alert('Пожалуйста, введите текст наблюдения.');
           return;
         }
 
         try {
-          const userDoc = await db.collection('users').doc(user.uid).get();
-          if (!userDoc.exists || userDoc.data().role !== 'admin') {
-            adminContent.innerHTML = `
-              <div class="card text-center" style="padding: 3rem;">
-                <h3>Доступ запрещён</h3>
-                <p>Только для администраторов</p>
-                <a href="/" class="button">На главную</a>
-              </div>
-            `;
-            return;
-          }
-
-          // Загружаем пользователей с детьми
-          const usersSnapshot = await db.collection('users').get();
-          const users = [];
-          usersSnapshot.forEach(doc => {
-            const data = doc.data();
-            if (data.children && data.children.length > 0) {
-              users.push({ ...data, uid: doc.id });
-            }
+          await db.collection('observations').add({
+            parentId: parentId,
+            childId: childId,
+            childName: childName,
+            text: text,
+            date: firebase.firestore.FieldValue.serverTimestamp(),
+            author: 'Администратор',
+            status: 'new'
           });
 
-          if (users.length === 0) {
-            adminContent.innerHTML = `
-              <div class="card text-center" style="padding: 3rem;">
-                <h3>Нет родителей с детьми</h3>
-              </div>
-            `;
-            return;
-          }
-
-          let usersHtml = '';
-          users.forEach(u => {
-            const childrenList = u.children.map(c => `${c.childName} (${c.age} лет)`).join(', ');
-            usersHtml += `
-              <tr>
-                <td>${u.name}</td>
-                <td>${u.email}</td>
-                <td>${childrenList}</td>
-                <td>
-                  <button class="button outline" onclick="openObservationForm('${u.uid}', '${u.name.replace(/'/g, "\\'")}', '${JSON.stringify(u.children).replace(/'/g, "\\'")}')">
-                    Отправить наблюдение
-                  </button>
-                </td>
-              </tr>
-            `;
-          });
-
-          adminContent.innerHTML = `
-            <div class="card">
-              <h3>👥 Родители с детьми (${users.length})</h3>
-              <table class="w-100">
-                <thead>
-                  <tr style="background:#f5f5f5;">
-                    <th>Имя</th>
-                    <th>Email</th>
-                    <th>Дети</th>
-                    <th>Действия</th>
-                  </tr>
-                </thead>
-                <tbody>${usersHtml}</tbody>
-              </table>
-            </div>
-
-            <!-- Модальное окно -->
-            <div id="observationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
-              <div style="background:white; margin:50px auto; padding:2rem; max-width:600px; border-radius:12px;">
-                <h3>Новое наблюдение для <span id="modalParentName"></span></h3>
-                <form id="observationForm">
-                  <div class="form-group">
-                    <label>Ребёнок</label>
-                    <select id="observationChild" required>
-                      <option value="">Выберите ребёнка</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label>Текст наблюдения *</label>
-                    <textarea id="observationText" rows="5" required placeholder="Опишите наблюдение..."></textarea>
-                  </div>
-                  <button type="submit" class="button">Отправить</button>
-                  <button type="button" class="secondary-button ml-2" onclick="closeModal()">Отмена</button>
-                </form>
-              </div>
-            </div>
-          `;
-
-          // Обработчики
-          document.getElementById('observationForm')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const parentId = document.getElementById('observationForm').dataset.parentId;
-            const childId = document.getElementById('observationChild').value;
-            const childName = document.querySelector(`#observationChild option[value="${childId}"]`).textContent;
-            const text = document.getElementById('observationText').value.trim();
-
-            if (!text) return;
-
-            await db.collection('observations').add({
-              parentId: parentId,
-              childId: childId,
-              childName: childName,
-              text: text,
-              date: firebase.firestore.FieldValue.serverTimestamp(),
-              author: 'Администратор',
-              status: 'new'
-            });
-
-            alert('Наблюдение отправлено!');
-            closeModal();
-          });
-
+          alert('✅ Наблюдение успешно отправлено!');
+          closeObservationModal();
         } catch (err) {
           console.error('Ошибка:', err);
-          adminContent.innerHTML = `<div class="card text-center"><p>Ошибка: ${err.message}</p></div>`;
+          alert('Ошибка: ' + (err.message || 'Не удалось отправить'));
         }
       });
 
-      // Функции для модального окна (глобальные)
-      window.openObservationForm = function(parentId, parentName, childrenJson) {
-        const children = JSON.parse(childrenJson);
-        const select = document.getElementById('observationChild');
-        select.innerHTML = '<option value="">Выберите ребёнка</option>';
-        children.forEach(child => {
-          const opt = document.createElement('option');
-          opt.value = child.childId;
-          opt.textContent = `${child.childName} (${child.age} лет)`;
-          select.appendChild(opt);
-        });
-        document.getElementById('modalParentName').textContent = parentName;
-        document.getElementById('observationForm').dataset.parentId = parentId;
-        document.getElementById('observationModal').style.display = 'block';
-      };
+    } catch (err) {
+      console.error('Ошибка:', err);
+      adminContent.innerHTML = `<div class="card text-center"><p>Ошибка: ${err.message}</p></div>`;
+    }
+  });
 
-      window.closeModal = function() {
-        document.getElementById('observationModal').style.display = 'none';
-        document.getElementById('observationText').value = '';
-      };
-    </script>
+  // Функции модального окна
+  window.showObservationModal = function(parentId, parentName, childrenJson) {
+    const children = JSON.parse(childrenJson);
+    const select = document.getElementById('observationChild');
+    select.innerHTML = '<option value="">Выберите ребёнка</option>';
+    children.forEach(child => {
+      const opt = document.createElement('option');
+      opt.value = child.childId;
+      opt.textContent = `${child.childName} (${child.age} лет)`;
+      select.appendChild(opt);
+    });
+    document.getElementById('modalParentName').textContent = parentName;
+    document.getElementById('observationForm').dataset.parentId = parentId;
+    document.getElementById('observationModal').style.display = 'block';
+  };
+
+  window.closeObservationModal = function() {
+    document.getElementById('observationModal').style.display = 'none';
+    document.getElementById('observationText').value = '';
+  };
+</script>
 </body>
 </html>
