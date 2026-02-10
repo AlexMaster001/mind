@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Для родителей | Тихая поддержка</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <custom-navbar></custom-navbar>
     
-    <!-- Spacer для фиксированной навигации -->
     <div class="nav-spacer"></div>
 
     <main class="container">
@@ -47,7 +50,7 @@
 
         <section class="education-section card">
             <h2>🎨 Кружок "Свободный кубик"</h2>
-            <p>Развивающие занятия для детей 3-12 лет с элементами арт-терапии и психологической поддержки</p>
+            <p>Развивающие занятия для детей 3–12 лет с элементами арт-терапии и психологической поддержки</p>
             
             <div class="club-registration">
                 <form class="club-form" id="clubForm">
@@ -72,8 +75,13 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="email">Email для связи</label>
-                        <input type="email" id="email">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Пароль *</label>
+                        <input type="password" id="password" minlength="6" required placeholder="Не менее 6 символов">
                     </div>
                     
                     <div class="form-group">
@@ -98,11 +106,74 @@
     <script src="components/navbar.js"></script>
     <script src="components/footer.js"></script>
     <script>
-        document.getElementById('clubForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Спасибо за заявку! Мы свяжемся с вами в течение 24 часов.');
-            this.reset();
-        });
+      const firebaseConfig = {
+        apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
+        authDomain: "minde-31a83.firebaseapp.com",
+        projectId: "minde-31a83",
+        storageBucket: "minde-31a83.appspot.com",
+        messagingSenderId: "1003108983817",
+        appId: "1:1003108983817:web:494ede688023c73667c4d8"
+      };
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+
+      document.getElementById('clubForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const parentName = document.getElementById('parent-name').value.trim();
+        const childName = document.getElementById('child-name').value.trim();
+        const childAge = document.getElementById('child-age').value;
+        const phone = document.getElementById('contact').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        if (password.length < 6) {
+          alert('Пароль должен содержать не менее 6 символов');
+          return;
+        }
+
+        try {
+          // Создаём аккаунт
+          const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+          const user = userCredential.user;
+          const db = firebase.firestore();
+
+          const childId = db.collection('children').doc().id;
+          const childData = {
+            childId: childId,
+            childName: childName,
+            age: parseInt(childAge)
+          };
+
+          // Сохраняем профиль
+          await db.collection('users').doc(user.uid).set({
+            name: parentName,
+            email: email,
+            phone: phone,
+            role: 'user',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+
+          // Добавляем ребёнка
+          await db.collection('users').doc(user.uid).update({
+            children: firebase.firestore.FieldValue.arrayUnion(childData)
+          });
+
+          alert('✅ Заявка принята! Вы успешно зарегистрированы.');
+          window.location.href = '/profile.html';
+
+        } catch (error) {
+          console.error('Ошибка:', error);
+          let msg = 'Не удалось отправить заявку. Попробуйте позже.';
+          if (error.code === 'auth/email-already-in-use') {
+            msg = 'Этот email уже зарегистрирован. Используйте другой или войдите в существующий аккаунт.';
+          }
+          if (error.code === 'auth/invalid-email') msg = 'Некорректный email';
+          if (error.code === 'auth/weak-password') msg = 'Пароль слишком слабый (мин. 6 символов)';
+          alert('Ошибка: ' + msg);
+        }
+      });
     </script>
 </body>
 </html>

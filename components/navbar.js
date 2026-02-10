@@ -123,10 +123,11 @@ class CustomNavbar extends HTMLElement {
 
   checkAuth() {
     const authSection = this.shadowRoot.getElementById('authSection');
+    
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         firebase.firestore().collection('users').doc(user.uid).get().then(doc => {
-          const data = doc.exists ? doc.data() : { name: user.email.split('@')[0], role: 'client' };
+          const data = doc.exists ? doc.data() : { name: user.email.split('@')[0], role: 'user' };
           this.renderUserMenu({ ...data, uid: user.uid });
         });
       } else {
@@ -146,10 +147,17 @@ class CustomNavbar extends HTMLElement {
   renderUserMenu(user) {
     const authSection = this.shadowRoot.getElementById('authSection');
     const initials = user.name ? user.name[0].toUpperCase() : '??';
+    
+    // Показываем "Админку" только если роль = "admin"
+    const adminLink = user.role === 'admin' 
+      ? '<a href="/admin.html" class="auth-link">Админка</a>'
+      : '';
+    
     let menuHTML = `
       <div class="user-menu">
         <div class="user-avatar">${initials}</div>
         <a href="/profile.html" class="auth-link">Профиль</a>
+        ${adminLink}
         <button class="auth-link logout" id="logoutBtn">Выйти</button>
       </div>
     `;

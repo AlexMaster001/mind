@@ -5,178 +5,200 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Админ-панель | Тихая поддержка</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <custom-navbar></custom-navbar>
-    
-    <!-- Spacer для фиксированной навигации -->
     <div class="nav-spacer"></div>
 
     <main class="container">
         <section class="hero">
             <h1>Админ-панель</h1>
-            <p>Управление контентом и пользователями</p>
+            <p>Управление пользователями и отправка наблюдений</p>
         </section>
 
         <div id="adminContent">
-            <!-- Контент будет загружен через JavaScript -->
             <div class="card text-center" style="padding: 3rem;">
-                <h3>Проверка доступа...</h3>
+                <h3>Загрузка...</h3>
             </div>
         </div>
     </main>
 
     <custom-footer></custom-footer>
-    
     <script src="components/navbar.js"></script>
     <script src="components/footer.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const adminContent = document.getElementById('adminContent');
-            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            
-            if (!isLoggedIn || !user.name || user.role !== 'admin') {
-                adminContent.innerHTML = `
-                    <div class="card text-center" style="padding: 3rem;">
-                        <h3>Доступ запрещен</h3>
-                        <p>У вас нет прав для доступа к админ-панели.</p>
-                        <a href="/" class="button">На главную</a>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Демо-статистика
-            const stats = {
-                totalUsers: 42,
-                totalTests: 156,
-                activeToday: 8,
-                averageScore: 68
-            };
-            
-            // Демо-пользователи
-            const users = [
-                { id: 1, name: 'Иван Петров', email: 'ivan@test.ru', role: 'user', tests: 5, lastActive: '2024-01-15' },
-                { id: 2, name: 'Мария Сидорова', email: 'maria@test.ru', role: 'user', tests: 3, lastActive: '2024-01-14' },
-                { id: 3, name: 'Алексей Кирсанов', email: 'alexey@test.ru', role: 'admin', tests: 12, lastActive: '2024-01-15' },
-                { id: 4, name: 'Екатерина Волкова', email: 'ekaterina@test.ru', role: 'parent', tests: 2, lastActive: '2024-01-13' }
-            ];
-            
+      // Инициализация Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
+        authDomain: "minde-31a83.firebaseapp.com",
+        projectId: "minde-31a83",
+        storageBucket: "minde-31a83.appspot.com",
+        messagingSenderId: "1003108983817",
+        appId: "1:1003108983817:web:494ede688023c73667c4d8"
+      };
+
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+
+      // Ждём, пока Firebase восстановит сессию
+      auth.onAuthStateChanged(async (user) => {
+        const adminContent = document.getElementById('adminContent');
+
+        if (!user) {
+          adminContent.innerHTML = `
+            <div class="card text-center" style="padding: 3rem;">
+              <h3>Войдите как администратор</h3>
+              <a href="/login.html" class="button">Вход</a>
+            </div>
+          `;
+          return;
+        }
+
+        try {
+          const userDoc = await db.collection('users').doc(user.uid).get();
+          if (!userDoc.exists || userDoc.data().role !== 'admin') {
             adminContent.innerHTML = `
-                <div class="admin-grid">
-                    <div class="admin-card">
-                        <h3>📊 Статистика</h3>
-                        <p><strong>Всего пользователей:</strong> ${stats.totalUsers}</p>
-                        <p><strong>Всего тестов пройдено:</strong> ${stats.totalTests}</p>
-                        <p><strong>Активных сегодня:</strong> ${stats.activeToday}</p>
-                        <p><strong>Средний балл:</strong> ${stats.averageScore}%</p>
-                    </div>
-                    
-                    <div class="admin-card">
-                        <h3>🚀 Быстрые действия</h3>
-                        <button class="button w-100 mb-2" onclick="alert('Функция в разработке')">
-                            Добавить новый тест
-                        </button>
-                        <button class="secondary-button w-100 mb-2" onclick="alert('Функция в разработке')">
-                            Редактировать материалы
-                        </button>
-                        <button class="secondary-button w-100" onclick="alert('Функция в разработке')">
-                            Отправить рассылку
-                        </button>
-                    </div>
-                    
-                    <div class="admin-card">
-                        <h3>🔔 Последние действия</h3>
-                        <ul style="padding-left: 1.5rem;">
-                            <li>Иван Петров прошел тест на тревожность (5 мин назад)</li>
-                            <li>Новый пользователь зарегистрирован (1 час назад)</li>
-                            <li>Мария Сидорова записалась в кружок (2 часа назад)</li>
-                            <li>Обновлены материалы для родителей (вчера)</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="card mt-4">
-                    <h3>👥 Управление пользователями</h3>
-                    <table class="w-100">
-                        <thead>
-                            <tr style="background: #f5f5f5;">
-                                <th style="padding: 0.75rem; text-align: left;">Имя</th>
-                                <th style="padding: 0.75rem; text-align: left;">Email</th>
-                                <th style="padding: 0.75rem; text-align: left;">Роль</th>
-                                <th style="padding: 0.75rem; text-align: left;">Тестов</th>
-                                <th style="padding: 0.75rem; text-align: left;">Последняя активность</th>
-                                <th style="padding: 0.75rem; text-align: left;">Действия</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${users.map(user => `
-                                <tr style="border-bottom: 1px solid #eee;">
-                                    <td style="padding: 0.75rem;">${user.name}</td>
-                                    <td style="padding: 0.75rem;">${user.email}</td>
-                                    <td style="padding: 0.75rem;">
-                                        <select class="w-100" style="padding: 0.25rem 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-                                            <option value="user" ${user.role === 'user' ? 'selected' : ''}>Пользователь</option>
-                                            <option value="parent" ${user.role === 'parent' ? 'selected' : ''}>Родитель</option>
-                                            <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Администратор</option>
-                                        </select>
-                                    </td>
-                                    <td style="padding: 0.75rem;">${user.tests}</td>
-                                    <td style="padding: 0.75rem;">${user.lastActive}</td>
-                                    <td style="padding: 0.75rem;">
-                                        <button class="auth-link" onclick="alert('Редактирование ${user.name}')">
-                                            Редактировать
-                                        </button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="card mt-4">
-                    <h3>⚙️ Настройки системы</h3>
-                    <form id="systemSettings" class="register-form">
-                        <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" checked>
-                                Разрешить регистрацию новых пользователей
-                            </label>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" checked>
-                                Отправлять email-уведомления
-                            </label>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox">
-                                Требовать подтверждение email
-                            </label>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="siteTitle">Название сайта</label>
-                            <input type="text" id="siteTitle" value="Тихая поддержка">
-                        </div>
-                        
-                        <div class="form-group">
-                            <button type="submit" class="button">Сохранить настройки</button>
-                        </div>
-                    </form>
-                </div>
+              <div class="card text-center" style="padding: 3rem;">
+                <h3>Доступ запрещён</h3>
+                <p>Только для администраторов</p>
+                <a href="/" class="button">На главную</a>
+              </div>
             `;
-            
-            // Обработчик формы настроек
-            document.getElementById('systemSettings')?.addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('Настройки сохранены (в демо-версии изменения не применяются)');
+            return;
+          }
+
+          // Загружаем пользователей с детьми
+          const usersSnapshot = await db.collection('users').get();
+          const users = [];
+          usersSnapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.children && data.children.length > 0) {
+              users.push({ ...data, uid: doc.id });
+            }
+          });
+
+          if (users.length === 0) {
+            adminContent.innerHTML = `
+              <div class="card text-center" style="padding: 3rem;">
+                <h3>Нет родителей с детьми</h3>
+              </div>
+            `;
+            return;
+          }
+
+          let usersHtml = '';
+          users.forEach(u => {
+            const childrenList = u.children.map(c => `${c.childName} (${c.age} лет)`).join(', ');
+            usersHtml += `
+              <tr>
+                <td>${u.name}</td>
+                <td>${u.email}</td>
+                <td>${childrenList}</td>
+                <td>
+                  <button class="button outline" onclick="openObservationForm('${u.uid}', '${u.name.replace(/'/g, "\\'")}', '${JSON.stringify(u.children).replace(/'/g, "\\'")}')">
+                    Отправить наблюдение
+                  </button>
+                </td>
+              </tr>
+            `;
+          });
+
+          adminContent.innerHTML = `
+            <div class="card">
+              <h3>👥 Родители с детьми (${users.length})</h3>
+              <table class="w-100">
+                <thead>
+                  <tr style="background:#f5f5f5;">
+                    <th>Имя</th>
+                    <th>Email</th>
+                    <th>Дети</th>
+                    <th>Действия</th>
+                  </tr>
+                </thead>
+                <tbody>${usersHtml}</tbody>
+              </table>
+            </div>
+
+            <!-- Модальное окно -->
+            <div id="observationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+              <div style="background:white; margin:50px auto; padding:2rem; max-width:600px; border-radius:12px;">
+                <h3>Новое наблюдение для <span id="modalParentName"></span></h3>
+                <form id="observationForm">
+                  <div class="form-group">
+                    <label>Ребёнок</label>
+                    <select id="observationChild" required>
+                      <option value="">Выберите ребёнка</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Текст наблюдения *</label>
+                    <textarea id="observationText" rows="5" required placeholder="Опишите наблюдение..."></textarea>
+                  </div>
+                  <button type="submit" class="button">Отправить</button>
+                  <button type="button" class="secondary-button ml-2" onclick="closeModal()">Отмена</button>
+                </form>
+              </div>
+            </div>
+          `;
+
+          // Обработчики
+          document.getElementById('observationForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const parentId = document.getElementById('observationForm').dataset.parentId;
+            const childId = document.getElementById('observationChild').value;
+            const childName = document.querySelector(`#observationChild option[value="${childId}"]`).textContent;
+            const text = document.getElementById('observationText').value.trim();
+
+            if (!text) return;
+
+            await db.collection('observations').add({
+              parentId: parentId,
+              childId: childId,
+              childName: childName,
+              text: text,
+              date: firebase.firestore.FieldValue.serverTimestamp(),
+              author: 'Администратор',
+              status: 'new'
             });
+
+            alert('Наблюдение отправлено!');
+            closeModal();
+          });
+
+        } catch (err) {
+          console.error('Ошибка:', err);
+          adminContent.innerHTML = `<div class="card text-center"><p>Ошибка: ${err.message}</p></div>`;
+        }
+      });
+
+      // Функции для модального окна (глобальные)
+      window.openObservationForm = function(parentId, parentName, childrenJson) {
+        const children = JSON.parse(childrenJson);
+        const select = document.getElementById('observationChild');
+        select.innerHTML = '<option value="">Выберите ребёнка</option>';
+        children.forEach(child => {
+          const opt = document.createElement('option');
+          opt.value = child.childId;
+          opt.textContent = `${child.childName} (${child.age} лет)`;
+          select.appendChild(opt);
         });
+        document.getElementById('modalParentName').textContent = parentName;
+        document.getElementById('observationForm').dataset.parentId = parentId;
+        document.getElementById('observationModal').style.display = 'block';
+      };
+
+      window.closeModal = function() {
+        document.getElementById('observationModal').style.display = 'none';
+        document.getElementById('observationText').value = '';
+      };
     </script>
 </body>
 </html>
