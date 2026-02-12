@@ -663,3 +663,117 @@ main {
     text-align: center;
   }
 }
+
+/* === ИСПРАВЛЕНИЕ ГРАДИЕНТА НА МОБИЛЬНЫХ === */
+@media (max-width: 768px) {
+  .hero {
+    padding-bottom: 40px; /* Уменьшаем нижний отступ */
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+  
+  /* Убираем градиентную волну на мобильных полностью */
+  .hero::before {
+    display: none !important;
+  }
+  
+  /* Альтернатива: если нужно оставить, но сделать ниже - раскомментируйте:
+  .hero::before {
+    height: 30px;
+    opacity: 0.2;
+    bottom: -10px;
+  }
+  */
+  
+  /* Добавляем простую линию вместо градиента */
+  .hero::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    width: 80%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+    opacity: 0.3;
+    border-radius: 2px;
+  }
+  
+  /* Исправляем отступы в тексте */
+  .hero p {
+    padding: 0 15px;
+    font-size: 1rem;
+  }
+  
+  .hero h1 {
+    padding: 0 10px;
+    font-size: 1.8rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  
+  /* Убираем возможные конфликты z-index */
+  .hero .container {
+    position: relative;
+    z-index: 2;
+  }
+  
+  /* Исправляем подпись автора */
+  .author-signature {
+    margin: 1.5rem 1rem;
+    padding: 1rem;
+    font-size: 0.95rem;
+  }
+  
+  /* Кнопки на мобильных */
+  .cta-buttons {
+    gap: 0.8rem;
+    padding: 0 20px;
+  }
+  
+  .button,
+  .secondary-button {
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 480px) {
+  .hero {
+    padding-top: 50px;
+    padding-bottom: 30px;
+  }
+  
+  .hero h1 {
+    font-size: 1.5rem;
+  }
+  
+  .hero p {
+    font-size: 0.95rem;
+  }
+  
+  .author-signature {
+    font-size: 0.9rem;
+    padding: 0.8rem;
+  }
+  
+  .ethics-note {
+    font-size: 0.8rem;
+    padding: 0 15px;
+  }
+}
+
+/* === ИСПРАВЛЕНИЕ ДЛЯ ПЛАНШЕТОВ === */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hero::before {
+    height: 60px;
+    opacity: 0.7;
+  }
+  
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+}
