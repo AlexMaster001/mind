@@ -183,6 +183,21 @@
                 date = d.date.toDate().toLocaleDateString('ru-RU');
               }
 
+              // === ИСПРАВЛЕНИЕ: корректное отображение результата ===
+              let scoreDisplay;
+              if (typeof d.score === 'object') {
+                // EMBU-S
+                const fW = d.score.fatherWarmth ?? 0;
+                const fC = d.score.fatherCriticism ?? 0;
+                const mW = d.score.motherWarmth ?? 0;
+                const mC = d.score.motherCriticism ?? 0;
+                scoreDisplay = `Отец: т=${fW}, к=${fC} | Мать: т=${mW}, к=${mC}`;
+              } else if (typeof d.score === 'number') {
+                scoreDisplay = `${d.score}${d.maxScore ? `/${d.maxScore}` : ''}`;
+              } else {
+                scoreDisplay = String(d.score);
+              }
+
               const li = document.createElement('li');
               li.style.marginBottom = '1rem';
               li.style.padding = '1rem';
@@ -190,7 +205,7 @@
               li.style.borderRadius = '8px';
               li.innerHTML = `
                 <strong>${d.testName}</strong><br>
-                Результат: ${d.score}/${d.maxScore || '?'} (${d.interpretation})<br>
+                Результат: ${scoreDisplay} (${d.interpretation})<br>
                 Пройден: ${date}<br>
                 <a href="/tests/tests.html" class="button outline" style="font-size:0.85rem;padding:0.3rem 0.6rem;margin-top:0.5rem;display:inline-block;">Перепройти</a>
               `;
