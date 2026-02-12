@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тест на детско-родительские отношения | Тихая поддержка</title>
     <link rel="stylesheet" href="../style.css">
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -172,8 +171,7 @@
                 <div id="resultText"></div>
                 <div class="disclaimer">
                     <h3>Важная информация</h3>
-                    <p>Этот тест — инструмент самооценки, а не медицинский диагноз. Результаты не могут быть использованы для постановки диагноза или назначения лечения.</p>
-                    <p>Если вы испытываете сильный стресс, тревогу, чувство безысходности или мысли о самоповреждении — обратитесь к лицензированному психологу или психиатру. Вы имеете право на поддержку — не только в кризис, но и до него.</p>
+                    <p>Этот тест — инструмент самооценки, а не медицинский диагноз...</p>
                 </div>
             </div>
         </section>
@@ -188,7 +186,6 @@
     <script src="../components/navbar.js"></script>
     <script src="../components/footer.js"></script>
     <script>
-      // Инициализация Firebase
       const firebaseConfig = {
         apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
         authDomain: "minde-31a83.firebaseapp.com",
@@ -201,7 +198,7 @@
         firebase.initializeApp(firebaseConfig);
       }
 
-      document.getElementById('parentingTestForm').addEventListener('submit', function(e) {
+      document.getElementById('parentingTestForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
         let fatherWarmth = 0;
@@ -243,39 +240,38 @@
         <p>Этот опросник помогает увидеть, какие паттерны заботы вы получали в детстве. Он не даёт «диагноза» и не сравнивает вас с «идеальным».</p>
         <p>Ваш опыт — реален, даже если он не совпадает с нормой. EMBU отражает ваше восприятие, а не объективную картину. Это инструмент для рефлексии, а не для обвинения родителей.</p>`;
 
-        // === СОХРАНЕНИЕ РЕЗУЛЬТАТА ===
         const user = firebase.auth().currentUser;
+        if (!user) {
+          alert('Ошибка: пользователь не авторизован');
+          return;
+        }
+
+        const testName = 'EMBU-S';
+        const testId = `${testName}_${user.uid}`;
+        const db = firebase.firestore();
+
         const resultData = {
           testName: 'Тест на детско-родительские отношения (EMBU-S)',
-          date: new Date().toISOString(),
+          date: firebase.firestore.FieldValue.serverTimestamp(),
           score: {
             fatherWarmth: fatherWarmth,
             fatherCriticism: fatherCriticism,
             motherWarmth: motherWarmth,
             motherCriticism: motherCriticism
           },
-          interpretation: `Отец: теплота ${fatherWarmthLevel}, критика ${fatherCriticismLevel}. Мать: теплота ${motherWarmthLevel}, критика ${motherCriticismLevel}`
+          interpretation: `Отец: теплота ${fatherWarmthLevel}, критика ${fatherCriticismLevel}. Мать: теплота ${motherWarmthLevel}, критика ${motherCriticismLevel}`,
+          userId: user.uid
         };
 
-        if (user) {
-          // Сохраняем в Firestore
-          firebase.firestore()
-            .collection('users')
-            .doc(user.uid)
-            .collection('testResults')
-            .add(resultData)
-            .then(() => console.log('Результат EMBU сохранён в Firestore'))
-            .catch(err => console.error('Ошибка Firestore:', err));
-        } else {
-          // Сохраняем в localStorage
-          const history = JSON.parse(localStorage.getItem('testHistory') || '[]');
-          history.push(resultData);
-          localStorage.setItem('testHistory', JSON.stringify(history));
+        try {
+          await db.collection('testResults').doc(testId).set(resultData, { merge: true });
+          document.getElementById('resultText').innerHTML = resultText;
+          document.getElementById('testResults').style.display = 'block';
+          window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
+        } catch (err) {
+          console.error('Ошибка:', err);
+          alert('Не удалось сохранить результат');
         }
-
-        document.getElementById('resultText').innerHTML = resultText;
-        document.getElementById('testResults').style.display = 'block';
-        window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
       });
     </script>
 </body>

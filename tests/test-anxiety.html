@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тест на тревожность | Тихая поддержка</title>
     <link rel="stylesheet" href="../style.css">
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -31,7 +30,6 @@
             </div>
 
             <form id="anxietyTestForm" class="test-form">
-                <!-- Вопросы GAD-7 -->
                 <div class="question">
                     <h3>1. Чувствуете ли вы нервозность, тревогу или напряжение?</h3>
                     <div class="options">
@@ -41,6 +39,7 @@
                         <label><input type="radio" name="q1" value="3"> Почти каждый день (3 балла)</label>
                     </div>
                 </div>
+
                 <div class="question">
                     <h3>2. Не можете перестать или контролировать своё беспокойство?</h3>
                     <div class="options">
@@ -50,6 +49,7 @@
                         <label><input type="radio" name="q2" value="3"> Почти каждый день (3 балла)</label>
                     </div>
                 </div>
+
                 <div class="question">
                     <h3>3. Беспокоитесь слишком сильно по разным вещам?</h3>
                     <div class="options">
@@ -59,6 +59,7 @@
                         <label><input type="radio" name="q3" value="3"> Почти каждый день (3 балла)</label>
                     </div>
                 </div>
+
                 <div class="question">
                     <h3>4. С трудом расслабляетесь?</h3>
                     <div class="options">
@@ -68,6 +69,7 @@
                         <label><input type="radio" name="q4" value="3"> Почти каждый день (3 балла)</label>
                     </div>
                 </div>
+
                 <div class="question">
                     <h3>5. Так сильно нервничаете, что не можете усидеть на месте?</h3>
                     <div class="options">
@@ -77,6 +79,7 @@
                         <label><input type="radio" name="q5" value="3"> Почти каждый день (3 балла)</label>
                     </div>
                 </div>
+
                 <div class="question">
                     <h3>6. Легко раздражаетесь или злитесь?</h3>
                     <div class="options">
@@ -86,6 +89,7 @@
                         <label><input type="radio" name="q6" value="3"> Почти каждый день (3 балла)</label>
                     </div>
                 </div>
+
                 <div class="question">
                     <h3>7. Чувствуете страх, будто случится что-то ужасное?</h3>
                     <div class="options">
@@ -120,7 +124,6 @@
     <script src="../components/navbar.js"></script>
     <script src="../components/footer.js"></script>
     <script>
-      // Инициализация Firebase
       const firebaseConfig = {
         apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
         authDomain: "minde-31a83.firebaseapp.com",
@@ -133,7 +136,7 @@
         firebase.initializeApp(firebaseConfig);
       }
 
-      document.getElementById('anxietyTestForm').addEventListener('submit', function(e) {
+      document.getElementById('anxietyTestForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
         let total = 0;
@@ -153,37 +156,36 @@
           resultText = `<p><strong>${total} баллов: тяжёлая тревожность</strong></p><p>Ваш уровень тревожности высок. Настоятельно рекомендуется обратиться к психологу или психиатру для профессиональной помощи.</p>`;
         }
 
-        // Сохранение результата
         const user = firebase.auth().currentUser;
+        if (!user) {
+          alert('Ошибка: пользователь не авторизован');
+          return;
+        }
+
+        const testName = 'GAD-7';
+        const testId = `${testName}_${user.uid}`;
+        const db = firebase.firestore();
+
         const resultData = {
           testName: 'Тест на тревожность (GAD-7)',
-          date: new Date().toISOString(),
+          date: firebase.firestore.FieldValue.serverTimestamp(),
           score: total,
           maxScore: 21,
           interpretation: total <= 4 ? 'минимальный' : 
                         total <= 9 ? 'лёгкий' : 
-                        total <= 14 ? 'умеренный' : 'тяжёлый'
+                        total <= 14 ? 'умеренный' : 'тяжёлый',
+          userId: user.uid
         };
 
-        if (user) {
-          // Сохраняем в Firestore
-          firebase.firestore()
-            .collection('users')
-            .doc(user.uid)
-            .collection('testResults')
-            .add(resultData)
-            .then(() => console.log('Результат сохранён в Firestore'))
-            .catch(err => console.error('Ошибка Firestore:', err));
-        } else {
-          // Сохраняем в localStorage
-          const history = JSON.parse(localStorage.getItem('testHistory') || '[]');
-          history.push(resultData);
-          localStorage.setItem('testHistory', JSON.stringify(history));
+        try {
+          await db.collection('testResults').doc(testId).set(resultData, { merge: true });
+          document.getElementById('resultText').innerHTML = resultText;
+          document.getElementById('testResults').style.display = 'block';
+          window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
+        } catch (err) {
+          console.error('Ошибка сохранения:', err);
+          alert('Не удалось сохранить результат');
         }
-
-        document.getElementById('resultText').innerHTML = resultText;
-        document.getElementById('testResults').style.display = 'block';
-        window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
       });
     </script>
 </body>

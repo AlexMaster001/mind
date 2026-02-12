@@ -72,7 +72,8 @@
 
         <!-- История тестов -->
         <div id="testHistory">
-            <h3>Загрузка истории...</h3>
+            <h3>История тестов</h3>
+            <ul id="testList" style="list-style: none; padding: 0;"></ul>
         </div>
     </main>
 
@@ -106,6 +107,7 @@
         const userInfoDiv = document.getElementById('userInfo');
         const childrenSection = document.getElementById('childrenSection');
         const observationsSection = document.getElementById('observationsSection');
+        const testList = document.getElementById('testList');
 
         if (!user) {
           userInfoDiv.innerHTML = '<p>Вы не авторизованы.</p>';
@@ -166,34 +168,39 @@
             observationsSection.style.display = 'block';
           }
 
-          // Загружаем историю тестов
-          const testSnapshot = await db
-            .collection('users')
-            .doc(user.uid)
-            .collection('testResults')
-            .orderBy('date', 'desc')
-            .get();
+          // === ЗАГРУЖАЕМ ТЕСТЫ ПО ID ===
+          const testIds = ['GAD-7_' + user.uid, 'CBI_' + user.uid, 'EMBU-S_' + user.uid];
+          testList.innerHTML = '';
+          let hasTests = false;
 
-          const historyDiv = document.getElementById('testHistory');
-          if (testSnapshot.empty) {
-            historyDiv.innerHTML = '<h3>История тестов</h3><p>Вы ещё не проходили тесты.</p>';
-            return;
+          for (const id of testIds) {
+            const doc = await db.collection('testResults').doc(id).get();
+            if (doc.exists) {
+              hasTests = true;
+              const d = doc.data();
+              let date = '—';
+              if (d.date && d.date.toDate) {
+                date = d.date.toDate().toLocaleDateString('ru-RU');
+              }
+
+              const li = document.createElement('li');
+              li.style.marginBottom = '1rem';
+              li.style.padding = '1rem';
+              li.style.border = '1px solid #eee';
+              li.style.borderRadius = '8px';
+              li.innerHTML = `
+                <strong>${d.testName}</strong><br>
+                Результат: ${d.score}/${d.maxScore || '?'} (${d.interpretation})<br>
+                Пройден: ${date}<br>
+                <a href="/tests/tests.html" class="button outline" style="font-size:0.85rem;padding:0.3rem 0.6rem;margin-top:0.5rem;display:inline-block;">Перепройти</a>
+              `;
+              testList.appendChild(li);
+            }
           }
 
-          let html = '<h3>История тестов</h3><ul>';
-          testSnapshot.forEach(doc => {
-            const d = doc.data();
-            let date = '—';
-            if (d.date && d.date.toDate) {
-              date = d.date.toDate().toLocaleDateString('ru-RU');
-            }
-            html += `<li>
-              <strong>${d.testName}</strong> — ${d.score}/${d.maxScore} (${d.interpretation}) от ${date}
-              <a href="/tests/tests.html" class="button outline ml-2" style="font-size:0.8rem;padding:0.3rem 0.6rem;">Перепройти</a>
-            </li>`;
-          });
-          html += '</ul>';
-          historyDiv.innerHTML = html;
+          if (!hasTests) {
+            document.getElementById('testHistory').innerHTML = '<h3>История тестов</h3><p>Вы ещё не проходили тесты.</p>';
+          }
 
         } catch (err) {
           console.error('Ошибка загрузки:', err);
