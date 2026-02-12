@@ -13,14 +13,16 @@ class CustomNavbar extends HTMLElement {
           top: 0;
           z-index: 1000;
         }
-        .container {
+
+        .navbar-inner {
           max-width: 1200px;
           margin: 0 auto;
           padding: 0 20px;
           display: flex;
-          justify-content: space-between;
           align-items: center;
+          justify-content: space-between;
         }
+
         .logo {
           font-family: 'Manrope', sans-serif;
           font-weight: 800;
@@ -31,27 +33,43 @@ class CustomNavbar extends HTMLElement {
           gap: 0.5rem;
         }
         .logo::before { content: "🧠"; font-size: 1.8rem; }
-        nav ul {
-          display: flex;
+
+        .nav-links {
+          text-align: center;
+          flex: 1;
+        }
+
+        .nav-links ul {
+          display: inline-block;
           list-style: none;
-          gap: 1.5rem;
           margin: 0;
           padding: 0;
+          gap: 1.5rem;
         }
-        nav a {
+
+        .nav-links li {
+          display: inline-block;
+        }
+
+        .nav-links a {
           font-family: 'Manrope', sans-serif;
           font-weight: 500;
           font-size: 1rem;
           color: var(--text-color);
           text-decoration: none;
+          padding: 0.5rem 0.8rem;
+          border-radius: 6px;
         }
-        nav a:hover { color: var(--accent-color); }
+        .nav-links a:hover {
+          color: var(--accent-color);
+        }
+
         .auth-section {
           display: flex;
           align-items: center;
           gap: 0.8rem;
-          margin-left: 1rem;
         }
+
         .auth-link {
           font-size: 0.9rem;
           padding: 0.5rem 0.8rem;
@@ -68,6 +86,7 @@ class CustomNavbar extends HTMLElement {
           color: var(--accent-color);
           border: 1px solid var(--accent-color);
         }
+
         .user-menu {
           display: flex;
           align-items: center;
@@ -85,15 +104,47 @@ class CustomNavbar extends HTMLElement {
           font-weight: bold;
           font-size: 0.9rem;
         }
+
+        /* === АДАПТИВНОСТЬ === */
+        @media (max-width: 768px) {
+          .navbar-inner {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+            padding: 0 16px;
+          }
+
+          .logo {
+            width: 100%;
+            text-align: center;
+            font-size: 1.3rem;
+          }
+          .logo::before { font-size: 1.5rem; }
+
+          .nav-links {
+            text-align: center;
+          }
+
+          .nav-links ul {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+          }
+
+          .auth-section {
+            justify-content: flex-end;
+            margin-left: auto;
+          }
+        }
       </style>
 
-      <div class="container">
+      <div class="navbar-inner">
         <div class="logo">
           <span>Тихая поддержка</span>
           <span class="specialist">Алексей Кирсанов | Психолог</span>
         </div>
-        <div class="auth-section" id="authSection"></div>
-        <nav>
+        <div class="nav-links">
           <ul>
             <li><a href="/">Главная</a></li>
             <li><a href="/tests/tests.html">Тесты</a></li>
@@ -101,7 +152,8 @@ class CustomNavbar extends HTMLElement {
             <li><a href="/about.html">Обо мне</a></li>
             <li><a href="/contacts.html">Контакты</a></li>
           </ul>
-        </nav>
+        </div>
+        <div class="auth-section" id="authSection"></div>
       </div>
     `;
 
@@ -148,7 +200,6 @@ class CustomNavbar extends HTMLElement {
     const authSection = this.shadowRoot.getElementById('authSection');
     const initials = user.name ? user.name[0].toUpperCase() : '??';
     
-    // Показываем "Админку" только если роль = "admin"
     const adminLink = user.role === 'admin' 
       ? '<a href="/admin.html" class="auth-link">Админка</a>'
       : '';
