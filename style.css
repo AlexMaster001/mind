@@ -777,3 +777,24 @@ main {
     font-size: 2.2rem;
   }
 }
+
+/* === ИСПРАВЛЕНИЕ ВЫРАВНИВАНИЯ КНОПОК В ТЕСТАХ === */
+.tests-grid .test-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.tests-grid .test-card > * {
+  flex: 1 0 auto;
+}
+
+.tests-grid .test-card h3,
+.tests-grid .test-card p,
+.tests-grid .test-card .duration {
+  margin-bottom: 0.5rem;
+}
+
+.tests-grid .test-card .button {
+  margin-top: auto;
+  align-self: flex-start;
+}
