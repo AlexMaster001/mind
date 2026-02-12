@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тест на детско-родительские отношения | Тихая поддержка</title>
     <link rel="stylesheet" href="../style.css">
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <custom-navbar></custom-navbar>
+    <div class="nav-spacer"></div>
 
     <main class="container">
         <section class="hero">
@@ -171,7 +173,7 @@
                 <div id="resultText"></div>
                 <div class="disclaimer">
                     <h3>Важная информация</h3>
-                    <p>Этот тест — инструмент самооценки, а не медицинский диагноз...</p>
+                    <p>Этот тест — инструмент самооценки, а не медицинский диагноз. Он не даёт «диагноза» и не сравнивает вас с «идеальным». Ваш опыт — реален, даже если он не совпадает с нормой. Это инструмент для рефлексии, а не для обвинения родителей.</p>
                 </div>
             </div>
         </section>
@@ -240,11 +242,12 @@
         <p>Этот опросник помогает увидеть, какие паттерны заботы вы получали в детстве. Он не даёт «диагноза» и не сравнивает вас с «идеальным».</p>
         <p>Ваш опыт — реален, даже если он не совпадает с нормой. EMBU отражает ваше восприятие, а не объективную картину. Это инструмент для рефлексии, а не для обвинения родителей.</p>`;
 
+        document.getElementById('resultText').innerHTML = resultText;
+        document.getElementById('testResults').style.display = 'block';
+        window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
+
         const user = firebase.auth().currentUser;
-        if (!user) {
-          alert('Ошибка: пользователь не авторизован');
-          return;
-        }
+        if (!user) return;
 
         const testName = 'EMBU-S';
         const testId = `${testName}_${user.uid}`;
@@ -265,12 +268,8 @@
 
         try {
           await db.collection('testResults').doc(testId).set(resultData, { merge: true });
-          document.getElementById('resultText').innerHTML = resultText;
-          document.getElementById('testResults').style.display = 'block';
-          window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
         } catch (err) {
-          console.error('Ошибка:', err);
-          alert('Не удалось сохранить результат');
+          console.error('Не удалось сохранить результат:', err);
         }
       });
     </script>

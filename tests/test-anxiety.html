@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тест на тревожность | Тихая поддержка</title>
     <link rel="stylesheet" href="../style.css">
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -22,11 +23,6 @@
         <section class="card test-container">
             <div class="author-signature">
                 <p>Тест подготовлен на основе методики GAD-7 (Generalized Anxiety Disorder)</p>
-            </div>
-
-            <div class="test-intro">
-                <h2>Инструкция</h2>
-                <p>Ниже приведены утверждения, описывающие, как вы себя чувствовали за последние две недели. Отметьте, насколько часто каждое из них было характерно для вас.</p>
             </div>
 
             <form id="anxietyTestForm" class="test-form">
@@ -108,8 +104,7 @@
                 <div id="resultText"></div>
                 <div class="disclaimer">
                     <h3>Важная информация</h3>
-                    <p>Этот тест — инструмент самооценки, а не медицинский диагноз. Результаты не могут быть использованы для постановки диагноза или назначения лечения.</p>
-                    <p>Если вы испытываете сильный стресс, тревогу, чувство безысходности или мысли о самоповреждении — обратитесь к лицензированному психологу или психиатру. Вы имеете право на поддержку — не только в кризис, но и до него.</p>
+                    <p>Этот тест — инструмент самооценки, а не медицинский диагноз...</p>
                 </div>
             </div>
         </section>
@@ -156,11 +151,14 @@
           resultText = `<p><strong>${total} баллов: тяжёлая тревожность</strong></p><p>Ваш уровень тревожности высок. Настоятельно рекомендуется обратиться к психологу или психиатру для профессиональной помощи.</p>`;
         }
 
+        // Показываем результат сразу
+        document.getElementById('resultText').innerHTML = resultText;
+        document.getElementById('testResults').style.display = 'block';
+        window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
+
+        // Сохраняем только если пользователь авторизован
         const user = firebase.auth().currentUser;
-        if (!user) {
-          alert('Ошибка: пользователь не авторизован');
-          return;
-        }
+        if (!user) return;
 
         const testName = 'GAD-7';
         const testId = `${testName}_${user.uid}`;
@@ -179,12 +177,8 @@
 
         try {
           await db.collection('testResults').doc(testId).set(resultData, { merge: true });
-          document.getElementById('resultText').innerHTML = resultText;
-          document.getElementById('testResults').style.display = 'block';
-          window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
         } catch (err) {
-          console.error('Ошибка сохранения:', err);
-          alert('Не удалось сохранить результат');
+          console.error('Не удалось сохранить результат:', err);
         }
       });
     </script>

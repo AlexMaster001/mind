@@ -11,6 +11,7 @@
 </head>
 <body>
     <custom-navbar></custom-navbar>
+    <div class="nav-spacer"></div>
 
     <main class="container">
         <section class="hero">
@@ -21,11 +22,6 @@
         <section class="card test-container">
             <div class="author-signature">
                 <p>Тест на основе методики Copenhagen Burnout Inventory (CBI)</p>
-            </div>
-
-            <div class="test-intro">
-                <h2>Инструкция</h2>
-                <p>Оцените, насколько каждое утверждение соответствует вашему состоянию в последнее время.</p>
             </div>
 
             <form id="burnoutTestForm" class="test-form">
@@ -39,8 +35,7 @@
                         <label><input type="radio" name="q1" value="100"> Всегда / Почти всегда (100%)</label>
                     </div>
                 </div>
-
-                <div class="question">
+                <div class="question"></div>    
                     <h3>2. Насколько вы чувствуете усталость при пробуждении?</h3>
                     <div class="options">
                         <label><input type="radio" name="q2" value="0" required> Никогда / Очень редко (0%)</label>
@@ -83,7 +78,6 @@
                         <label><input type="radio" name="q5" value="100"> Всегда / Почти всегда (100%)</label>
                     </div>
                 </div>
-
                 <div class="question">
                     <h3>6. Насколько вы чувствуете физическую усталость?</h3>
                     <div class="options">
@@ -101,16 +95,14 @@
             <div id="testResults" class="test-results" style="display: none;">
                 <h2>Ваши результаты</h2>
                 <div id="resultText"></div>
-                <div class="disclaimer">
+                <div class="disclaimer">                    
                     <h3>Важная информация</h3>
                     <p>Этот тест — инструмент самооценки, а не медицинский диагноз...</p>
                 </div>
             </div>
         </section>
         
-        <p class="signature">
-            Тест подготовлен Кирсановым Алексеем, психологом. Для точной диагностики обратитесь к специалисту.
-        </p>
+        <p class="signature">Тест подготовлен Кирсановым Алексеем...</p>
     </main>
 
     <custom-footer></custom-footer>
@@ -133,8 +125,7 @@
       document.getElementById('burnoutTestForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        let total = 0;
-        let answered = 0;
+        let total = 0, answered = 0;
         for (let i = 1; i <= 6; i++) {
           const selected = document.querySelector(`input[name="q${i}"]:checked`);
           if (selected) {
@@ -155,11 +146,12 @@
           resultText = `<p><strong>${average}%: критический уровень выгорания</strong></p><p>Ваш уровень истощения очень высок. Настоятельно рекомендуется обратиться за профессиональной помощью.</p>`;
         }
 
+        document.getElementById('resultText').innerHTML = resultText;
+        document.getElementById('testResults').style.display = 'block';
+        window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
+
         const user = firebase.auth().currentUser;
-        if (!user) {
-          alert('Ошибка: пользователь не авторизован');
-          return;
-        }
+        if (!user) return;
 
         const testName = 'CBI';
         const testId = `${testName}_${user.uid}`;
@@ -178,12 +170,8 @@
 
         try {
           await db.collection('testResults').doc(testId).set(resultData, { merge: true });
-          document.getElementById('resultText').innerHTML = resultText;
-          document.getElementById('testResults').style.display = 'block';
-          window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
         } catch (err) {
-          console.error('Ошибка:', err);
-          alert('Не удалось сохранить результат');
+          console.error('Не удалось сохранить результат:', err);
         }
       });
     </script>
