@@ -13,6 +13,7 @@
 <body>
     <custom-navbar></custom-navbar>
     
+    <!-- Spacer для фиксированной навигации -->
     <div class="nav-spacer"></div>
 
     <main class="container">
@@ -31,19 +32,19 @@
                 <article class="category-card">
                     <h3>👨‍👩‍👧‍👦 Общение с подростком</h3>
                     <p>Как выстроить доверительный диалог, избежать конфликтов и понимать друг друга</p>
-                    <a href="#" class="button" onclick="alert('Материалы в разработке')">Читать статьи</a>
+                    <a href="articles/communication.html" class="button">Читать статьи</a>
                 </article>
                 
                 <article class="category-card">
                     <h3>😔 Эмоции подростка</h3>
                     <p>Как помочь ребенку справляться с эмоциональными перегрузками, тревогой и стрессом</p>
-                    <a href="#" class="button" onclick="alert('Материалы в разработке')">Читать статьи</a>
+                    <a href="articles/emotions.html" class="button">Читать статьи</a>
                 </article>
                 
                 <article class="category-card">
                     <h3>⚠️ Кризисные ситуации</h3>
                     <p>Что делать в сложных моментах взросления: буллинг, зависимости, проблемы в школе</p>
-                    <a href="#" class="button" onclick="alert('Материалы в разработке')">Читать статьи</a>
+                    <a href="articles/crisis.html" class="button">Читать статьи</a>
                 </article>
             </div>
         </section>
@@ -134,7 +135,6 @@
         }
 
         try {
-          // Создаём аккаунт
           const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
           const user = userCredential.user;
           const db = firebase.firestore();
@@ -146,7 +146,6 @@
             age: parseInt(childAge)
           };
 
-          // Сохраняем профиль
           await db.collection('users').doc(user.uid).set({
             name: parentName,
             email: email,
@@ -155,7 +154,6 @@
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
           }, { merge: true });
 
-          // Добавляем ребёнка
           await db.collection('users').doc(user.uid).update({
             children: firebase.firestore.FieldValue.arrayUnion(childData)
           });
