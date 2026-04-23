@@ -138,13 +138,18 @@
         document.getElementById('testResults').style.display = 'block';
         window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
 
+        // === ПРОВЕРКА АВТОРИЗАЦИИ ===
         const user = firebase.auth().currentUser;
-        if (!user) return;
+        if (!user) {
+          console.warn('⚠️ Пользователь не авторизован — результат не сохранён');
+          return;
+        }
 
-        // 🔧 ИСПРАВЛЕНО: правильный ID без дублирования
+        // === ФОРМИРОВАНИЕ ID ===
         const testId = `Perfectionism_FMPS_SF_${user.uid}`;
-        const db = firebase.firestore();
+        console.log('📄 Сохраняем результат с ID:', testId);
 
+        const db = firebase.firestore();
         const resultData = {
           testName: 'Тест на перфекционизм (FMPS-SF)',
           date: firebase.firestore.FieldValue.serverTimestamp(),
@@ -157,9 +162,10 @@
 
         try {
           await db.collection('testResults').doc(testId).set(resultData, { merge: true });
-          console.log('✅ Результат теста на перфекционизм сохранён');
+          console.log('✅ Результат успешно сохранён в Firestore');
         } catch (err) {
-          console.error('❌ Ошибка сохранения результата:', err);
+          console.error('❌ ОШИБКА Firestore:', err.message);
+          alert('Не удалось сохранить результат: ' + err.message);
         }
       });
     </script>
