@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Админ-панель | Тихая поддержка</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Firebase SDK (без пробелов!) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -79,7 +79,7 @@
             return;
           }
 
-          // Загружаем всех пользователей для отображения имён
+          // Загружаем всех пользователей
           const usersSnapshot = await db.collection('users').get();
           const parentNames = {};
           usersSnapshot.forEach(doc => {
@@ -87,14 +87,13 @@
             parentNames[doc.id] = `${data.name || '—'} (${data.email?.split('@')[0] || ''})`;
           });
 
-          // Загружаем все наблюдения
+          // === НАБЛЮДЕНИЯ ===
           const obsSnapshot = await db.collection('observations').orderBy('date', 'desc').get();
           const observations = [];
           obsSnapshot.forEach(doc => {
             observations.push({ id: doc.id, ...doc.data() });
           });
 
-          // Кнопка "Новое наблюдение"
           let html = `
             <div class="card">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
@@ -105,14 +104,41 @@
               ${observations.length === 0 ? '<p>Нет созданных наблюдений.</p>' : ''}
             </div>
           `;
-          adminContent.innerHTML = html;
 
-          // Обработчик новой записи
-          document.getElementById('newObsBtn').addEventListener('click', () => {
-            showCreateModal(parentNames);
+          // === ДОБАВЛЕНИЕ РЕБЁНКА ===
+          let parentOptions = '';
+          Object.entries(parentNames).forEach(([uid, name]) => {
+            parentOptions += `<option value="${uid}">${name}</option>`;
           });
 
-          // Рендер наблюдений
+          html += `
+            <div class="card" style="margin-top: 2rem;">
+              <h3>👶 Добавить ребёнка пользователю</h3>
+              <form id="addChildForm">
+                <div class="form-group">
+                  <label for="parentId">Родитель:</label>
+                  <select id="parentId" required>
+                    <option value="">— Выберите —</option>
+                    ${parentOptions}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="childName">Имя ребёнка:</label>
+                  <input type="text" id="childName" required minlength="2" maxlength="50" placeholder="Например, Мария">
+                </div>
+                <div class="form-group">
+                  <label for="childAge">Возраст (3–12 лет):</label>
+                  <input type="number" id="childAge" min="3" max="12" required>
+                </div>
+                <button type="submit" class="button">Добавить ребёнка</button>
+              </form>
+              <div id="addChildMessage" style="margin-top: 10px; color: green; font-weight: bold;"></div>
+            </div>
+          `;
+
+          adminContent.innerHTML = html;
+
+          // === РЕНДЕР НАБЛЮДЕНИЙ ===
           const listEl = document.getElementById('observationsList');
           observations.forEach(obs => {
             const card = document.createElement('div');
@@ -137,7 +163,11 @@
             listEl.appendChild(card);
           });
 
-          // Обработчики редактирования и удаления
+          // === ОБРАБОТЧИКИ ===
+          document.getElementById('newObsBtn').addEventListener('click', () => {
+            showCreateModal(parentNames);
+          });
+
           document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', function() {
               const id = this.getAttribute('data-id');
@@ -163,6 +193,44 @@
             });
           });
 
+          // === ДОБАВЛЕНИЕ РЕБЁНКА ===
+          document.getElementById('addChildForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const parentId = document.getElementById('parentId').value;
+            const childName = document.getElementById('childName').value.trim();
+            const childAge = parseInt(document.getElementById('childAge').value);
+
+            if (!parentId || !childName || isNaN(childAge) || childAge < 3 || childAge > 12) {
+              alert('Проверьте данные: возраст должен быть от 3 до 12 лет.');
+              return;
+            }
+
+            try {
+              const userRef = db.collection('users').doc(parentId);
+              const userDoc = await userRef.get();
+              if (!userDoc.exists) {
+                alert('Пользователь не найден');
+                return;
+              }
+
+              const userData = userDoc.data();
+              const children = userData.children || [];
+              const childId = Date.now().toString(); // уникальный ID
+
+              children.push({ childId, childName, age: childAge });
+              await userRef.update({ children });
+
+              document.getElementById('addChildMessage').textContent = '✅ Ребёнок успешно добавлен!';
+              document.getElementById('addChildForm').reset();
+              document.getElementById('parentId').value = '';
+
+              setTimeout(() => document.getElementById('addChildMessage').textContent = '', 3000);
+            } catch (err) {
+              console.error('Ошибка:', err);
+              alert('Не удалось добавить ребёнка: ' + (err.message || 'ошибка'));
+            }
+          });
+
         } catch (err) {
           console.error('Ошибка:', err);
           adminContent.innerHTML = `<div class="card text-center"><p>Ошибка: ${err.message}</p></div>`;
@@ -170,9 +238,7 @@
       });
 
       // === МОДАЛЬНЫЕ ОКНА ===
-
       function showCreateModal(parentNames) {
-        // Собираем список родителей с детьми
         let parentOptions = '';
         Object.entries(parentNames).forEach(([uid, name]) => {
           parentOptions += `<option value="${uid}">${name}</option>`;
@@ -210,7 +276,6 @@
         `;
         document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-        // Динамическая загрузка детей при выборе родителя
         document.getElementById('createParent').addEventListener('change', async function() {
           const uid = this.value;
           const childSelect = document.getElementById('createChild');
@@ -238,7 +303,6 @@
           }
         });
 
-        // Отправка формы
         document.getElementById('createForm').addEventListener('submit', async (e) => {
           e.preventDefault();
           const parentId = document.getElementById('createParent').value;
@@ -324,12 +388,8 @@
         justify-content: center;
       }
       @media (max-width: 768px) {
-        .card {
-          font-size: 0.95rem;
-        }
-        .small {
-          padding: 0.25rem 0.5rem;
-        }
+        .card { font-size: 0.95rem; }
+        .small { padding: 0.25rem 0.5rem; }
       }
     </style>
 </body>
