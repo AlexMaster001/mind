@@ -87,6 +87,7 @@
             <div id="testResults" class="test-results" style="display: none;">
                 <h2>Ваш результат</h2>
                 <div id="resultText"></div>
+                <div id="saveStatus" style="margin-top: 1rem; padding: 0.5rem; border-radius: 5px; display: none;"></div>
                 <div class="disclaimer">
                     <h3>Важная информация</h3>
                     <p>Высокий перфекционизм часто связан с тревожностью и выгоранием. Если ваши баллы выше 10 — стоит обсудить это на консультации.</p>
@@ -112,60 +113,98 @@
         messagingSenderId: "1003108983817",
         appId: "1:1003108983817:web:494ede688023c73667c4d8"
       };
+      
+      // Инициализация Firebase
       if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
       }
 
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+
       document.getElementById('perfectionismTestForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
+        // Подсчёт баллов
         let total = 0;
         for (let i = 1; i <= 5; i++) {
           const selected = document.querySelector(`input[name="q${i}"]:checked`);
           if (selected) total += parseInt(selected.value);
         }
 
+        // Интерпретация
+        let interpretation = '';
         let resultText = '';
+        
         if (total <= 4) {
-          resultText = `<p><strong>${total} баллов: минимальный уровень перфекционизма</strong></p>`;
+          interpretation = 'минимальный';
+          resultText = `<p><strong>${total} баллов из 15: минимальный уровень перфекционизма</strong></p>
+                       <p>Вы реалистично оцениваете свои возможности и не предъявляете к себе чрезмерных требований.</p>`;
         } else if (total <= 9) {
-          resultText = `<p><strong>${total} баллов: умеренный уровень перфекционизма</strong></p>`;
+          interpretation = 'умеренный';
+          resultText = `<p><strong>${total} баллов из 15: умеренный уровень перфекционизма</strong></p>
+                       <p>Вы стремитесь к качеству, но это редко мешает вам радоваться результатам.</p>`;
         } else {
-          resultText = `<p><strong>${total} баллов: высокий уровень перфекционизма</strong></p>`;
+          interpretation = 'высокий';
+          resultText = `<p><strong>${total} баллов из 15: высокий уровень перфекционизма</strong></p>
+                       <p>Стремление к идеалу может вызывать стресс и мешать удовлетворению от достижений.</p>`;
         }
 
+        // Показываем результат
         document.getElementById('resultText').innerHTML = resultText;
         document.getElementById('testResults').style.display = 'block';
         window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
 
-        // === ПРОВЕРКА АВТОРИЗАЦИИ ===
-        const user = firebase.auth().currentUser;
+        // Сохраняем в БД (если пользователь авторизован)
+        const user = auth.currentUser;
+        const saveStatus = document.getElementById('saveStatus');
+        
         if (!user) {
-          console.warn('⚠️ Пользователь не авторизован — результат не сохранён');
+          saveStatus.style.display = 'block';
+          saveStatus.style.backgroundColor = '#fff3cd';
+          saveStatus.style.color = '#856404';
+          saveStatus.innerHTML = 'ℹ️ Результат не сохранён. <a href="/login.html">Войдите</a>, чтобы сохранять историю тестов.';
           return;
         }
 
-        // === ФОРМИРОВАНИЕ ID ===
+        // Формируем ID документа (строго по правилам Firestore)
         const testId = `Perfectionism_FMPS_SF_${user.uid}`;
-        console.log('📄 Сохраняем результат с ID:', testId);
-
-        const db = firebase.firestore();
+        
+        // Данные для сохранения
         const resultData = {
           testName: 'Тест на перфекционизм (FMPS-SF)',
           date: firebase.firestore.FieldValue.serverTimestamp(),
           score: total,
           maxScore: 15,
-          interpretation: total <= 4 ? 'минимальный' : 
-                        total <= 9 ? 'умеренный' : 'высокий',
-          userId: user.uid
+          interpretation: interpretation,
+          userId: user.uid,
+          lastUpdated: new Date().toISOString()
         };
 
+        saveStatus.style.display = 'block';
+        saveStatus.style.backgroundColor = '#cfe2ff';
+        saveStatus.style.color = '#084298';
+        saveStatus.innerHTML = '💾 Сохранение результата...';
+
         try {
+          // set с merge: true перезаписывает существующий документ или создаёт новый
           await db.collection('testResults').doc(testId).set(resultData, { merge: true });
-          console.log('✅ Результат успешно сохранён в Firestore');
+          
+          saveStatus.style.backgroundColor = '#d1e7dd';
+          saveStatus.style.color = '#0f5132';
+          saveStatus.innerHTML = '✅ Результат сохранён в вашем профиле!';
+          
+          console.log('✅ Сохранено:', testId, total, interpretation);
+          
+          setTimeout(() => {
+            saveStatus.style.display = 'none';
+          }, 3000);
+          
         } catch (err) {
-          console.error('❌ ОШИБКА Firestore:', err.message);
-          alert('Не удалось сохранить результат: ' + err.message);
+          console.error('Ошибка:', err);
+          saveStatus.style.backgroundColor = '#f8d7da';
+          saveStatus.style.color = '#721c24';
+          saveStatus.innerHTML = `❌ Ошибка: ${err.message}`;
         }
       });
     </script>
