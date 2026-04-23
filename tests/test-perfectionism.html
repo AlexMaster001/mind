@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест на перфекционизм | Тихая поддержка</title>
+    <link rel="stylesheet" href="../style.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <custom-navbar></custom-navbar>
+    <div class="nav-spacer"></div>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Тест на перфекционизм (FMPS-SF)</h1>
+            <p>Оцените свою склонность к стремлению за совершенством</p>
+        </section>
+
+        <section class="card test-container">
+            <div class="author-signature">
+                <p>Тест на основе методики Frost Multidimensional Perfectionism Scale (Short Form)</p>
+            </div>
+
+            <div class="test-intro">
+                <h2>Инструкция</h2>
+                <p>Оцените, насколько каждое утверждение соответствует вам. Выберите один вариант ответа.</p>
+            </div>
+
+            <form id="perfectionismTestForm" class="test-form">
+                <div class="question">
+                    <h4>1. Я стремлюсь к совершенству во всём, что делаю.</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q1" value="0" required> Совсем не соответствует</label>
+                        <label><input type="radio" name="q1" value="1"> Скорее не соответствует</label>
+                        <label><input type="radio" name="q1" value="2"> Скорее соответствует</label>
+                        <label><input type="radio" name="q1" value="3"> Полностью соответствует</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>2. Мне трудно принять ошибку, даже если она незначительна.</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q2" value="0" required> Совсем не соответствует</label>
+                        <label><input type="radio" name="q2" value="1"> Скорее не соответствует</label>
+                        <label><input type="radio" name="q2" value="2"> Скорее соответствует</label>
+                        <label><input type="radio" name="q2" value="3"> Полностью соответствует</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>3. Я чувствую, что другие ожидают от меня безупречности.</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q3" value="0" required> Совсем не соответствует</label>
+                        <label><input type="radio" name="q3" value="1"> Скорее не соответствует</label>
+                        <label><input type="radio" name="q3" value="2"> Скорее соответствует</label>
+                        <label><input type="radio" name="q3" value="3"> Полностью соответствует</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>4. Я часто беспокоюсь, достаточно ли хорошо я сделал что-то.</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q4" value="0" required> Совсем не соответствует</label>
+                        <label><input type="radio" name="q4" value="1"> Скорее не соответствует</label>
+                        <label><input type="radio" name="q4" value="2"> Скорее соответствует</label>
+                        <label><input type="radio" name="q4" value="3"> Полностью соответствует</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>5. Если я не могу сделать что-то идеально, лучше вообще этого не делать.</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q5" value="0" required> Совсем не соответствует</label>
+                        <label><input type="radio" name="q5" value="1"> Скорее не соответствует</label>
+                        <label><input type="radio" name="q5" value="2"> Скорее соответствует</label>
+                        <label><input type="radio" name="q5" value="3"> Полностью соответствует</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="button">Получить результаты</button>
+            </form>
+
+            <div id="testResults" class="test-results" style="display: none;">
+                <h2>Ваш результат</h2>
+                <div id="resultText"></div>
+                <div class="disclaimer">
+                    <h3>Важная информация</h3>
+                    <p>Высокий перфекционизм часто связан с тревожностью и выгоранием. Если ваши баллы выше 10 — стоит обсудить это на консультации.</p>
+                </div>
+            </div>
+        </section>
+        
+        <p class="signature">
+            Тест подготовлен Кирсановым Алексеем, психологом. Для точной диагностики обратитесь к специалисту.
+        </p>
+    </main>
+
+    <custom-footer></custom-footer>
+    
+    <script src="../components/navbar.js"></script>
+    <script src="../components/footer.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDdaP1VyoidAjXmFERSKqldbSMsFIEXxSk",
+        authDomain: "minde-31a83.firebaseapp.com",
+        projectId: "minde-31a83",
+        storageBucket: "minde-31a83.appspot.com",
+        messagingSenderId: "1003108983817",
+        appId: "1:1003108983817:web:494ede688023c73667c4d8"
+      };
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+
+      document.getElementById('perfectionismTestForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        let total = 0;
+        for (let i = 1; i <= 5; i++) {
+          const selected = document.querySelector(`input[name="q${i}"]:checked`);
+          if (selected) total += parseInt(selected.value);
+        }
+
+        let resultText = '';
+        if (total <= 4) {
+          resultText = `<p><strong>${total} баллов: минимальный уровень перфекционизма</strong></p>`;
+        } else if (total <= 9) {
+          resultText = `<p><strong>${total} баллов: умеренный уровень перфекционизма</strong></p>`;
+        } else {
+          resultText = `<p><strong>${total} баллов: высокий уровень перфекционизма</strong></p>`;
+        }
+
+        document.getElementById('resultText').innerHTML = resultText;
+        document.getElementById('testResults').style.display = 'block';
+        window.scrollTo({ top: document.getElementById('testResults').offsetTop - 100, behavior: 'smooth' });
+
+        const user = firebase.auth().currentUser;
+        if (!user) return;
+
+        const testName = 'Perfectionism_FMPS-SF';
+        const testId = `${testName}_${user.uid}`;
+        const db = firebase.firestore();
+
+        const resultData = {
+          testName: 'Тест на перфекционизм (FMPS-SF)',
+          date: firebase.firestore.FieldValue.serverTimestamp(),
+          score: total,
+          maxScore: 15,
+          interpretation: total <= 4 ? 'минимальный' : 
+                        total <= 9 ? 'умеренный' : 'высокий',
+          userId: user.uid
+        };
+
+        try {
+          await db.collection('testResults').doc(testId).set(resultData, { merge: true });
+        } catch (err) {
+          console.error('Не удалось сохранить результат:', err);
+        }
+      });
+    </script>
+</body>
+</html>
