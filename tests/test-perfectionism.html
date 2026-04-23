@@ -31,7 +31,6 @@
             </div>
 
             <form id="perfectionismTestForm" class="test-form">
-                <!-- Вопросы (оставляем как есть) -->
                 <div class="question">
                     <h4>1. Я стремлюсь к совершенству во всём, что делаю.</h4>
                     <div class="options">
@@ -41,7 +40,46 @@
                         <label><input type="radio" name="q1" value="3"> Полностью соответствует</label>
                     </div>
                 </div>
-                <!-- ... остальные 4 вопроса ... -->
+
+                <div class="question">
+                    <h4>2. Мне трудно принять ошибку, даже если она незначительна.</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q2" value="0" required> Совсем не соответствует</label>
+                        <label><input type="radio" name="q2" value="1"> Скорее не соответствует</label>
+                        <label><input type="radio" name="q2" value="2"> Скорее соответствует</label>
+                        <label><input type="radio" name="q2" value="3"> Полностью соответствует</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>3. Я чувствую, что другие ожидают от меня безупречности.</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q3" value="0" required> Совсем не соответствует</label>
+                        <label><input type="radio" name="q3" value="1"> Скорее не соответствует</label>
+                        <label><input type="radio" name="q3" value="2"> Скорее соответствует</label>
+                        <label><input type="radio" name="q3" value="3"> Полностью соответствует</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>4. Я часто беспокоюсь, достаточно ли хорошо я сделал что-то.</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q4" value="0" required> Совсем не соответствует</label>
+                        <label><input type="radio" name="q4" value="1"> Скорее не соответствует</label>
+                        <label><input type="radio" name="q4" value="2"> Скорее соответствует</label>
+                        <label><input type="radio" name="q4" value="3"> Полностью соответствует</label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h4>5. Если я не могу сделать что-то идеально, лучше вообще этого не делать.</h4>
+                    <div class="options">
+                        <label><input type="radio" name="q5" value="0" required> Совсем не соответствует</label>
+                        <label><input type="radio" name="q5" value="1"> Скорее не соответствует</label>
+                        <label><input type="radio" name="q5" value="2"> Скорее соответствует</label>
+                        <label><input type="radio" name="q5" value="3"> Полностью соответствует</label>
+                    </div>
+                </div>
 
                 <button type="submit" class="button">Получить результаты</button>
             </form>
@@ -89,8 +127,22 @@
           if (selected) total += parseInt(selected.value);
         }
 
-        let interpretation = total <= 4 ? 'минимальный' : total <= 9 ? 'умеренный' : 'высокий';
-        let resultText = `<p><strong>${total} баллов: ${interpretation} уровень перфекционизма</strong></p>`;
+        let interpretation = '';
+        let resultText = '';
+        
+        if (total <= 4) {
+          interpretation = 'минимальный';
+          resultText = `<p><strong>${total} баллов из 15: минимальный уровень перфекционизма</strong></p>
+                       <p>Вы реалистично оцениваете свои возможности и не предъявляете к себе чрезмерных требований.</p>`;
+        } else if (total <= 9) {
+          interpretation = 'умеренный';
+          resultText = `<p><strong>${total} баллов из 15: умеренный уровень перфекционизма</strong></p>
+                       <p>Вы стремитесь к качеству, но это редко мешает вам радоваться результатам.</p>`;
+        } else {
+          interpretation = 'высокий';
+          resultText = `<p><strong>${total} баллов из 15: высокий уровень перфекционизма</strong></p>
+                       <p>Стремление к идеалу может вызывать стресс и мешать удовлетворению от достижений.</p>`;
+        }
 
         document.getElementById('resultText').innerHTML = resultText;
         document.getElementById('testResults').style.display = 'block';
@@ -99,7 +151,6 @@
         const user = firebase.auth().currentUser;
         if (!user) return;
 
-        // 🔑 КЛЮЧЕВОЙ МОМЕНТ: ID должен точно совпадать с правилами
         const testId = `Perfectionism_FMPS_SF_${user.uid}`;
         const db = firebase.firestore();
 
@@ -113,9 +164,9 @@
             userId: user.uid
           }, { merge: true });
 
-          console.log('✅ Перфекционизм сохранён:', testId);
+          console.log('✅ Результат теста на перфекционизм успешно сохранён в Firestore');
         } catch (err) {
-          console.error('❌ Ошибка:', err.message);
+          console.error('❌ Ошибка при сохранении результата:', err.message);
         }
       });
     </script>
