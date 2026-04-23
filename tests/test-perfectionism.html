@@ -141,8 +141,8 @@
         const user = firebase.auth().currentUser;
         if (!user) return;
 
-        const testName = 'Perfectionism_FMPS-SF';
-        const testId = `${testName}_${user.uid}`;
+        // 🔧 ИСПРАВЛЕНО: правильный ID без дублирования
+        const testId = `Perfectionism_FMPS_SF_${user.uid}`;
         const db = firebase.firestore();
 
         const resultData = {
@@ -157,8 +157,9 @@
 
         try {
           await db.collection('testResults').doc(testId).set(resultData, { merge: true });
+          console.log('✅ Результат теста на перфекционизм сохранён');
         } catch (err) {
-          console.error('Не удалось сохранить результат:', err);
+          console.error('❌ Ошибка сохранения результата:', err);
         }
       });
     </script>

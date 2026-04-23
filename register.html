@@ -74,7 +74,7 @@
             return db.collection('users').doc(userCredential.user.uid).set({
               name: name,
               email: email,
-              role: 'client',
+              role: 'user', // ← БЫЛО 'client', ТЕПЕРЬ 'user'
               createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
           })
